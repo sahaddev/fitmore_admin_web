@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardSidebar extends StatelessWidget {
-  const DashboardSidebar({super.key});
+  final String currentPath;
+  const DashboardSidebar({super.key, this.currentPath = '/dashboard'});
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +58,42 @@ class DashboardSidebar extends StatelessWidget {
           _MenuItem(
             icon: LucideIcons.layoutDashboard,
             label: 'Dashboard',
-            isActive: true,
+            path: '/dashboard',
+            isActive: currentPath == '/dashboard',
           ),
-          _MenuItem(icon: LucideIcons.box, label: 'Products'),
-          _MenuItem(icon: LucideIcons.shoppingCart, label: 'Orders'),
-          _MenuItem(icon: LucideIcons.users, label: 'Users'),
-          _MenuItem(icon: LucideIcons.barChart2, label: 'Reports'),
+          _MenuItem(
+            icon: LucideIcons.box,
+            label: 'Products',
+            path: '/products',
+            isActive: currentPath.startsWith('/products'),
+          ),
+          _MenuItem(
+            icon: LucideIcons.shoppingCart,
+            label: 'Orders',
+            path: '/orders',
+            isActive: currentPath.startsWith('/orders'),
+          ),
+          _MenuItem(
+            icon: LucideIcons.users,
+            label: 'Customers',
+            path: '/customers',
+            isActive: currentPath.startsWith('/customers'),
+          ),
+          _MenuItem(
+            icon: LucideIcons.barChart2,
+            label: 'Reports',
+            path: '/reports',
+            isActive: currentPath.startsWith('/reports'),
+          ),
           Spacer(),
           // Bottom Items
           Divider(),
-          _MenuItem(icon: LucideIcons.settings, label: 'Settings'),
+          _MenuItem(
+            icon: LucideIcons.settings,
+            label: 'Settings',
+            path: '/settings',
+            isActive: currentPath.startsWith('/settings'),
+          ),
           SizedBox(height: 2.h),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 2.w),
@@ -108,10 +136,12 @@ class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isActive;
+  final String path;
 
   const _MenuItem({
     required this.icon,
     required this.label,
+    required this.path,
     this.isActive = false,
   });
 
@@ -123,7 +153,9 @@ class _MenuItem extends StatelessWidget {
         color: isActive ? Color(0xFF258fb0) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            context.go(path);
+          },
           borderRadius: BorderRadius.circular(8),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 1.2.h),

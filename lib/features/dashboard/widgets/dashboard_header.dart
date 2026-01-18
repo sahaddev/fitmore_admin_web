@@ -4,7 +4,9 @@ import 'package:sizer/sizer.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+  final String title;
+
+  const DashboardHeader({super.key, this.title = 'Dashboard Overview'});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class DashboardHeader extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'Dashboard Overview',
+            title,
             style: GoogleFonts.inter(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
@@ -92,7 +94,7 @@ class DashboardHeader extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundImage: NetworkImage(
-              'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+              'https://i.pravatar.cc/150?u=a042581f4e09026704d',
             ),
           ),
         ],
