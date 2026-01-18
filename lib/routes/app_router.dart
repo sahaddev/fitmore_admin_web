@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/view/login_page.dart';
 import '../features/products/view/product_list_page.dart';
 import '../features/products/view/add_product_page.dart';
+import '../features/order/view/order_list.dart';
+import '../features/user/view/user_list.dart';
+import '../features/coupons/view/coupon_list.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -20,6 +23,18 @@ class AppRouter {
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const MainDashboard(),
+      ),
+      GoRoute(
+        path: '/orders',
+        builder: (context, state) => const OrderListPage(),
+      ),
+      GoRoute(
+        path: '/customers',
+        builder: (context, state) => const UserListPage(),
+      ),
+      GoRoute(
+        path: '/marketing',
+        builder: (context, state) => const CouponListPage(),
       ),
     ],
   );
