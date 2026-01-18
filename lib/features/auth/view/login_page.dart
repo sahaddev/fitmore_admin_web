@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
       if (success && mounted) {
-        context.go('/products');
+        context.go('/dashboard');
       } else if (mounted) {
         final error = context.read<AuthViewModel>().error;
         ScaffoldMessenger.of(

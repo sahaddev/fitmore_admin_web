@@ -1,3 +1,4 @@
+import 'package:fitmore_web/features/dashboard/view/main_dashboard.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/view/login_page.dart';
 import '../features/products/view/product_list_page.dart';
@@ -15,6 +16,10 @@ class AppRouter {
       GoRoute(
         path: '/add-product',
         builder: (context, state) => const AddProductPage(),
+      ),
+      GoRoute(
+        path: '/dashboard',
+        builder: (context, state) => const MainDashboard(),
       ),
     ],
   );
