@@ -35,12 +35,12 @@ class DashboardHeader extends StatelessWidget {
                   hintText: 'Search orders, users...',
                   hintStyle: GoogleFonts.inter(
                     color: Colors.grey[500],
-                    fontSize: 11.sp,
+                    fontSize: 10.sp,
                   ),
                   prefixIcon: Icon(
                     LucideIcons.search,
                     color: Colors.grey[400],
-                    size: 18.sp,
+                    size: 12.sp,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -54,7 +54,7 @@ class DashboardHeader extends StatelessWidget {
           Spacer(),
           IconButton(
             onPressed: () {},
-            icon: Icon(LucideIcons.bell, color: Colors.grey[700], size: 18.sp),
+            icon: Icon(LucideIcons.bell, color: Colors.grey[700], size: 12.sp),
           ),
           SizedBox(width: 1.w),
           IconButton(
@@ -62,7 +62,7 @@ class DashboardHeader extends StatelessWidget {
             icon: Icon(
               LucideIcons.helpCircle,
               color: Colors.grey[700],
-              size: 18.sp,
+              size: 12.sp,
             ),
           ),
           SizedBox(width: 2.w),
@@ -89,13 +89,6 @@ class DashboardHeader extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          SizedBox(width: 1.w),
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(
-              'https://i.pravatar.cc/150?u=a042581f4e09026704d',
-            ),
           ),
         ],
       ),

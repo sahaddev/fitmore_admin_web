@@ -9,6 +9,9 @@ import 'features/auth/view_model/auth_view_model.dart';
 import 'features/products/data/product_api.dart';
 import 'features/products/data/product_repository.dart';
 import 'features/products/view_model/product_view_model.dart';
+import 'features/user/data/user_api.dart';
+import 'features/user/data/user_repository.dart';
+import 'features/user/view_model/user_view_model.dart';
 import 'routes/app_router.dart';
 import 'core/constants/app_colors.dart';
 
@@ -21,11 +24,14 @@ void main() async {
   final storageService = StorageService();
 
   // 2. Initialize Data Layer (APIs & Repositories)
-  final authApi = AuthApi(apiService);
+  final authApi = AuthApi();
   final authRepository = AuthRepository(authApi, storageService);
 
-  final productApi = ProductApi(apiService);
+  final productApi = ProductApi();
   final productRepository = ProductRepository(productApi);
+
+  final userApi = UserApi();
+  final userRepository = UserRepository(userApi);
 
   runApp(
     MultiProvider(
@@ -34,6 +40,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
         ChangeNotifierProvider(
           create: (_) => ProductViewModel(productRepository),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => UserViewModel(userRepository)..fetchUsers(),
         ),
       ],
       child: const MyApp(),

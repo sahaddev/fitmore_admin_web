@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../dashboard/widgets/dashboard_sidebar.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
+import '../view_model/user_view_model.dart';
+import '../model/user_model.dart';
 
-class UserListPage extends StatefulWidget {
+class UserListPage extends StatelessWidget {
   const UserListPage({super.key});
-
-  @override
-  State<UserListPage> createState() => _UserListPageState();
-}
-
-class _UserListPageState extends State<UserListPage> {
-  String _activeTab = 'All Users';
 
   @override
   Widget build(BuildContext context) {
@@ -23,307 +20,229 @@ class _UserListPageState extends State<UserListPage> {
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sidebar
           const DashboardSidebar(currentPath: '/customers'),
-
-          // Main Content
           Expanded(
             child: Column(
               children: [
-                // Global Header
                 const DashboardHeader(title: 'User Management'),
-
-                // Scrollable Content
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 2.h,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Page Header
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Consumer<UserViewModel>(
+                    builder: (context, viewModel, child) {
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 2.w,
+                          vertical: 2.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'User Management',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                SizedBox(height: 0.5.h),
-                                Text(
-                                  'Manage and monitor 1,240 registered customers in your database.',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10.sp,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(LucideIcons.download, size: 14.sp),
-                                  label: const Text('Export CSV'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.black87,
-                                    side: BorderSide(color: Colors.grey[300]!),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 1.5.w,
-                                      vertical: 1.5.h,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(width: 1.w),
-                                ElevatedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(LucideIcons.userPlus, size: 14.sp),
-                                  label: const Text('Add Customer'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF258fb0),
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 1.5.w,
-                                      vertical: 1.5.h,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            _buildPageHeader(viewModel),
+                            SizedBox(height: 3.h),
+                            _buildTabs(viewModel),
+                            SizedBox(height: 2.h),
+                            if (viewModel.isLoading)
+                              const Center(child: CircularProgressIndicator())
+                            else if (viewModel.error != null)
+                              Center(child: Text('Error: ${viewModel.error}'))
+                            else
+                              _buildUsersTable(viewModel),
+                            SizedBox(height: 5.h),
                           ],
                         ),
-
-                        SizedBox(height: 3.h),
-
-                        // Tabs
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey[200]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  _TabButton(
-                                    label: 'All Users',
-                                    isActive: _activeTab == 'All Users',
-                                    onTap: () => setState(
-                                      () => _activeTab = 'All Users',
-                                    ),
-                                  ),
-                                  _TabButton(
-                                    label: 'Active',
-                                    isActive: _activeTab == 'Active',
-                                    onTap: () =>
-                                        setState(() => _activeTab = 'Active'),
-                                  ),
-                                  _TabButton(
-                                    label: 'Flagged',
-                                    isActive: _activeTab == 'Flagged',
-                                    onTap: () =>
-                                        setState(() => _activeTab = 'Flagged'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 2.h),
-
-                        // Users Table
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              // Header
-                              Padding(
-                                padding: EdgeInsets.all(1.5.w),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: _TableHeader('CUSTOMER'),
-                                    ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: _TableHeader('CONTACT INFO'),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: _TableHeader('ORDERS'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('JOIN DATE'),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: _TableHeader('STATUS'),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: _TableHeader(
-                                        'ACTIONS',
-                                        align: TextAlign.end,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Divider(height: 1, color: Colors.grey[100]),
-
-                              // Rows
-                              _UserRow(
-                                name: 'Alex Rivera',
-                                id: '#49201',
-                                email: 'alex.rivera@email.com',
-                                phone: '+1 (555) 0123',
-                                orders: '42',
-                                orderBadge: '+5',
-                                joinDate: 'Oct 12, 2023',
-                                joinTime: '10:45 AM',
-                                status: 'Active',
-                                avatarUrl: 'https://i.pravatar.cc/150?u=1',
-                              ),
-                              _UserRow(
-                                name: 'Sarah Chen',
-                                id: '#49202',
-                                email: 'sarah.c@corp.net',
-                                phone: '+1 (555) 0987',
-                                orders: '15',
-                                joinDate: 'Nov 05, 2023',
-                                joinTime: '02:12 PM',
-                                status: 'Active',
-                                avatarUrl: 'https://i.pravatar.cc/150?u=2',
-                              ),
-                              _UserRow(
-                                name: 'Marcus Wright',
-                                id: '#49203',
-                                email: 'm.wright@email.com',
-                                phone: '+1 (555) 4433',
-                                orders: '0',
-                                joinDate: 'Dec 01, 2023',
-                                joinTime: '09:30 AM',
-                                status: 'Inactive',
-                                avatarUrl: 'https://i.pravatar.cc/150?u=3',
-                              ),
-                              _UserRow(
-                                name: 'Jordan Smith',
-                                id: '#49204',
-                                email: 'jordan.s@provider.com',
-                                phone: '+1 (555) 7788',
-                                orders: '8',
-                                joinDate: 'Dec 15, 2023',
-                                joinTime: '11:58 PM',
-                                status: 'Active',
-                                avatarUrl: 'https://i.pravatar.cc/150?u=4',
-                              ),
-                              _UserRow(
-                                name: 'Elena Rodriguez',
-                                id: '#49205',
-                                email: 'elena.r@email.com',
-                                phone: '+1 (555) 2299',
-                                orders: '27',
-                                joinDate: 'Jan 10, 2024',
-                                joinTime: '04:00 PM',
-                                status: 'Active',
-                                avatarUrl: 'https://i.pravatar.cc/150?u=5',
-                              ),
-
-                              SizedBox(height: 2.h),
-
-                              // Pagination
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 1.5.w,
-                                  vertical: 1.h,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Showing 1 to 5 of 1,240 results',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 9.sp,
-                                        color: Colors.grey[500],
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        _PaginationBtn(
-                                          icon: LucideIcons.chevronLeft,
-                                        ),
-                                        SizedBox(width: 4),
-                                        _PaginationBtn(
-                                          text: '1',
-                                          isActive: true,
-                                        ),
-                                        _PaginationBtn(text: '2'),
-                                        _PaginationBtn(text: '3'),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                          ),
-                                          child: Text(
-                                            '...',
-                                            style: TextStyle(
-                                              color: Colors.grey[400],
-                                            ),
-                                          ),
-                                        ),
-                                        _PaginationBtn(text: '25'),
-                                        SizedBox(width: 4),
-                                        _PaginationBtn(
-                                          icon: LucideIcons.chevronRight,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 5.h),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageHeader(UserViewModel viewModel) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'User Management',
+              style: GoogleFonts.inter(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 0.5.h),
+            Text(
+              'Manage and monitor ${viewModel.users.length} registered customers in your database.',
+              style: GoogleFonts.inter(
+                fontSize: 10.sp,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: Icon(LucideIcons.download, size: 14.sp),
+              label: const Text('Export CSV'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.black87,
+                side: BorderSide(color: Colors.grey[300]!),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 1.5.w,
+                  vertical: 1.5.h,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                backgroundColor: Colors.white,
+              ),
+            ),
+            SizedBox(width: 1.w),
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: Icon(LucideIcons.userPlus, size: 14.sp),
+              label: const Text('Add Customer'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF258fb0),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 1.5.w,
+                  vertical: 1.5.h,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabs(UserViewModel viewModel) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Row(
+            children: [
+              _TabButton(
+                label: 'All Users',
+                isActive: viewModel.activeTab == 'All Users',
+                onTap: () => viewModel.setActiveTab('All Users'),
+              ),
+              _TabButton(
+                label: 'Active',
+                isActive: viewModel.activeTab == 'Active',
+                onTap: () => viewModel.setActiveTab('Active'),
+              ),
+              _TabButton(
+                label: 'Flagged',
+                isActive: viewModel.activeTab == 'Flagged',
+                onTap: () => viewModel.setActiveTab('Flagged'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUsersTable(UserViewModel viewModel) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Header
+          Padding(
+            padding: EdgeInsets.all(1.5.w),
+            child: const Row(
+              children: [
+                Expanded(flex: 3, child: _TableHeader('CUSTOMER')),
+                Expanded(flex: 3, child: _TableHeader('CONTACT INFO')),
+                Expanded(flex: 1, child: _TableHeader('ORDERS')),
+                Expanded(flex: 2, child: _TableHeader('JOIN DATE')),
+                Expanded(flex: 1, child: _TableHeader('STATUS')),
+                Expanded(
+                  flex: 1,
+                  child: _TableHeader('ACTIONS', align: TextAlign.end),
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: Colors.grey[100]),
+
+          // Rows
+          if (viewModel.filteredUsers.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.h),
+              child: const Center(child: Text('No users found.')),
+            )
+          else
+            ...viewModel.filteredUsers.map((user) => _UserRow(user: user)),
+
+          SizedBox(height: 2.h),
+
+          // Pagination (Hardcoded for now as per original UI)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Showing 1 to ${viewModel.filteredUsers.length} of ${viewModel.filteredUsers.length} results',
+                  style: GoogleFonts.inter(
+                    fontSize: 9.sp,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                Row(
+                  children: [
+                    const _PaginationBtn(icon: LucideIcons.chevronLeft),
+                    const SizedBox(width: 4),
+                    const _PaginationBtn(text: '1', isActive: true),
+                    const _PaginationBtn(text: '2'),
+                    const _PaginationBtn(text: '3'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        '...',
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ),
+                    const _PaginationBtn(text: '25'),
+                    const SizedBox(width: 4),
+                    const _PaginationBtn(icon: LucideIcons.chevronRight),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 2.h),
         ],
       ),
     );
@@ -388,41 +307,24 @@ class _TableHeader extends StatelessWidget {
 }
 
 class _UserRow extends StatelessWidget {
-  final String name;
-  final String id;
-  final String email;
-  final String phone;
-  final String orders;
-  final String? orderBadge;
-  final String joinDate;
-  final String joinTime;
-  final String status;
-  final String avatarUrl;
+  final UserModel user;
 
-  const _UserRow({
-    required this.name,
-    required this.id,
-    required this.email,
-    required this.phone,
-    required this.orders,
-    this.orderBadge,
-    required this.joinDate,
-    required this.joinTime,
-    required this.status,
-    required this.avatarUrl,
-  });
+  const _UserRow({required this.user});
 
   @override
   Widget build(BuildContext context) {
-    Color statusBg = status == 'Active'
+    Color statusBg = user.status == 'Active'
         ? const Color(0xFFE6F7ED)
         : const Color(0xFFF3F4F6);
-    Color statusText = status == 'Active'
+    Color statusText = user.status == 'Active'
         ? const Color(0xFF2E7D32)
         : const Color(0xFF6B7280);
-    Color statusDot = status == 'Active'
+    Color statusDot = user.status == 'Active'
         ? const Color(0xFF2E7D32)
         : const Color(0xFF9CA3AF);
+
+    final joinDateStr = DateFormat('MMM dd, yyyy').format(user.joinDate);
+    final joinTimeStr = DateFormat('hh:mm a').format(user.joinDate);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.2.h),
@@ -438,14 +340,14 @@ class _UserRow extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundImage: NetworkImage(avatarUrl),
+                  backgroundImage: NetworkImage(user.avatarUrl),
                 ),
                 SizedBox(width: 1.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      user.name,
                       style: GoogleFonts.inter(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
@@ -453,7 +355,7 @@ class _UserRow extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'ID: $id',
+                      'ID: ${user.id}',
                       style: GoogleFonts.inter(
                         fontSize: 9.sp,
                         color: Colors.grey[500],
@@ -471,14 +373,14 @@ class _UserRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  email,
+                  user.email,
                   style: GoogleFonts.inter(
                     fontSize: 10.sp,
                     color: Colors.black87,
                   ),
                 ),
                 Text(
-                  phone,
+                  user.phone,
                   style: GoogleFonts.inter(
                     fontSize: 9.sp,
                     color: Colors.grey[500],
@@ -493,14 +395,14 @@ class _UserRow extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  orders,
+                  '${user.orders}',
                   style: GoogleFonts.inter(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (orderBadge != null) ...[
-                  SizedBox(width: 6),
+                if (user.recentOrders != null && user.recentOrders! > 0) ...[
+                  const SizedBox(width: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 6,
@@ -511,7 +413,7 @@ class _UserRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      orderBadge!,
+                      '+${user.recentOrders}',
                       style: GoogleFonts.inter(
                         fontSize: 8.sp,
                         color: const Color(0xFF2E7D32),
@@ -530,14 +432,14 @@ class _UserRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  joinDate,
+                  joinDateStr,
                   style: GoogleFonts.inter(
                     fontSize: 10.sp,
                     color: Colors.black87,
                   ),
                 ),
                 Text(
-                  joinTime,
+                  joinTimeStr,
                   style: GoogleFonts.inter(
                     fontSize: 9.sp,
                     color: Colors.grey[500],
@@ -570,9 +472,9 @@ class _UserRow extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
-                        status,
+                        user.status,
                         style: GoogleFonts.inter(
                           fontSize: 8.sp,
                           fontWeight: FontWeight.w600,

@@ -1,11 +1,5 @@
-import '../../../core/services/api_service.dart';
-
 class AuthApi {
-  // final ApiService _apiService; // Injected for future use
-
-  AuthApi(
-    ApiService apiService,
-  ); // Keep constructor signature for DI consistency
+  AuthApi();
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     // MOCK IMPLEMENTATION for demo purposes

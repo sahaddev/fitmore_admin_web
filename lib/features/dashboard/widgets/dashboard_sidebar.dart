@@ -30,25 +30,29 @@ class DashboardSidebar extends StatelessWidget {
                   child: Icon(LucideIcons.store, color: Colors.white, size: 20),
                 ),
                 SizedBox(width: 1.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'ShopAdmin',
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'ShopAdmin',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Text(
-                      'Management Portal',
-                      style: GoogleFonts.inter(
-                        fontSize: 8.sp,
-                        color: Colors.grey[500],
+                      Text(
+                        'Management Portal',
+                        style: GoogleFonts.inter(
+                          fontSize: 8.sp,
+                          color: Colors.grey[500],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -173,12 +177,15 @@ class _MenuItem extends StatelessWidget {
                   color: isActive ? Colors.white : Colors.grey[600],
                 ),
                 SizedBox(width: 1.w),
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                    color: isActive ? Colors.white : Colors.grey[600],
+                Expanded(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.inter(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isActive ? Colors.white : Colors.grey[600],
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

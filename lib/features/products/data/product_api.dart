@@ -1,4 +1,3 @@
-import '../../../core/services/api_service.dart';
 
 class ProductApi {
   // Mock in-memory storage for demo
@@ -23,7 +22,7 @@ class ProductApi {
     },
   ];
 
-  ProductApi(ApiService apiService);
+  ProductApi();
 
   Future<List<dynamic>> getProducts() async {
     // MOCK IMPLEMENTATION
