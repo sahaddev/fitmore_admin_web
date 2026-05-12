@@ -43,10 +43,7 @@ class _ProductListPageState extends State<ProductListPage> {
           // Scrollable Page Content
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 2.w,
-                vertical: 2.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -106,19 +103,15 @@ class _ProductListPageState extends State<ProductListPage> {
                       _FilterButton(
                         label: 'All Products',
                         isActive: _selectedFilter == 'All Products',
-                        onTap: () => setState(
-                          () => _selectedFilter = 'All Products',
-                        ),
+                        onTap: () =>
+                            setState(() => _selectedFilter = 'All Products'),
                       ),
                       SizedBox(width: 1.w),
                       _FilterDropdown(label: 'Electronics'),
                       SizedBox(width: 1.w),
                       _FilterDropdown(label: 'Furniture'),
                       SizedBox(width: 1.w),
-                      _FilterChip(
-                        label: 'Low Stock',
-                        color: Colors.orange,
-                      ),
+                      _FilterChip(label: 'Low Stock', color: Colors.orange),
                     ],
                   ),
 
@@ -131,7 +124,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.02),
+                          color: Colors.black.withValues(alpha: 0.02),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -144,18 +137,12 @@ class _ProductListPageState extends State<ProductListPage> {
                           padding: EdgeInsets.all(1.5.w),
                           child: Row(
                             children: [
-                              Expanded(
-                                flex: 3,
-                                child: _TableHeader('PRODUCT'),
-                              ),
+                              Expanded(flex: 3, child: _TableHeader('PRODUCT')),
                               Expanded(
                                 flex: 2,
                                 child: _TableHeader('CATEGORY'),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('PRICE'),
-                              ),
+                              Expanded(flex: 2, child: _TableHeader('PRICE')),
                               Expanded(
                                 flex: 3,
                                 child: _TableHeader('STOCK STATUS'),
@@ -230,9 +217,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         ),
                         Row(
                           children: [
-                            _PaginationButton(
-                              icon: LucideIcons.chevronLeft,
-                            ),
+                            _PaginationButton(icon: LucideIcons.chevronLeft),
                             _PaginationButton(text: '1', isActive: true),
                             _PaginationButton(text: '2'),
                             _PaginationButton(text: '3'),
@@ -241,9 +226,7 @@ class _ProductListPageState extends State<ProductListPage> {
                               style: TextStyle(color: Colors.grey[400]),
                             ),
                             _PaginationButton(text: '248'),
-                            _PaginationButton(
-                              icon: LucideIcons.chevronRight,
-                            ),
+                            _PaginationButton(icon: LucideIcons.chevronRight),
                           ],
                         ),
                       ],
@@ -471,7 +454,7 @@ class _ProductRow extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: imageColor.withOpacity(0.1),
+                    color: imageColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     image: null, // Placeholder
                   ),
@@ -675,7 +658,7 @@ class _BottomStatCard extends StatelessWidget {
         boxShadow: [
           if (!isPrimary)
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -687,7 +670,7 @@ class _BottomStatCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isPrimary
-                  ? Colors.white.withOpacity(0.2)
+                  ? Colors.white.withValues(alpha: 0.2)
                   : Colors.grey[50],
               shape: BoxShape.circle,
             ),
@@ -703,7 +686,7 @@ class _BottomStatCard extends StatelessWidget {
                   fontSize: 8.sp,
                   fontWeight: FontWeight.bold,
                   color: isPrimary
-                      ? Colors.white.withOpacity(0.8)
+                      ? Colors.white.withValues(alpha: 0.8)
                       : Colors.grey[500],
                   letterSpacing: 0.5,
                 ),

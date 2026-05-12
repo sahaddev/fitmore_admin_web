@@ -46,7 +46,6 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   void _onSave() async {
-    // TODO: Implement actual save logic with viewModel
     // For now, just validation
     if (_formKey.currentState!.validate()) {
       context.read<ProductViewModel>().addProduct(
@@ -146,48 +145,48 @@ class _AddProductPageState extends State<AddProductPage> {
               ],
             ),
           ),
-                Divider(height: 1, color: Colors.grey[200]),
+          Divider(height: 1, color: Colors.grey[200]),
 
-                // Scrollable Form Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(2.w),
-                    child: Form(
-                      key: _formKey,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          // Scrollable Form Content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(2.w),
+              child: Form(
+                key: _formKey,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Left Column (Main Form)
+                    Expanded(
+                      flex: 2,
+                      child: Column(
                         children: [
-                          // Left Column (Main Form)
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                _buildBasicInfoCard(),
-                                SizedBox(height: 2.h),
-                                _buildPricingInventoryCard(),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 2.w),
-                          // Right Column (Media & Settings)
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: [
-                                _buildProductMediaCard(),
-                                SizedBox(height: 2.h),
-                                _buildTagsSEOCard(),
-                              ],
-                            ),
-                          ),
+                          _buildBasicInfoCard(),
+                          SizedBox(height: 2.h),
+                          _buildPricingInventoryCard(),
                         ],
                       ),
                     ),
-                  ),
+                    SizedBox(width: 2.w),
+                    // Right Column (Media & Settings)
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          _buildProductMediaCard(),
+                          SizedBox(height: 2.h),
+                          _buildTagsSEOCard(),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBasicInfoCard() {
@@ -445,7 +444,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 Switch(
                   value: _trackStock,
                   onChanged: (v) => setState(() => _trackStock = v),
-                  activeColor: const Color(0xFF258fb0),
+                  activeThumbColor: const Color(0xFF258fb0),
                 ),
               ],
             ),
@@ -741,7 +740,7 @@ class _SectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

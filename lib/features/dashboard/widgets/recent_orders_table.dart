@@ -15,7 +15,7 @@ class RecentOrdersTable extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -56,13 +56,13 @@ class RecentOrdersTable extends StatelessWidget {
             color: Colors.grey[50],
             child: Row(
               children: [
-                Expanded(flex: 2, child: _HeaderCell('ORDER ID')),
-                Expanded(flex: 3, child: _HeaderCell('CUSTOMER')),
-                Expanded(flex: 2, child: _HeaderCell('AMOUNT')),
-                Expanded(flex: 2, child: _HeaderCell('STATUS')),
+                Expanded(flex: 2, child: _headerCell('ORDER ID')),
+                Expanded(flex: 3, child: _headerCell('CUSTOMER')),
+                Expanded(flex: 2, child: _headerCell('AMOUNT')),
+                Expanded(flex: 2, child: _headerCell('STATUS')),
                 Expanded(
                   flex: 1,
-                  child: _HeaderCell('ACTION', align: TextAlign.end),
+                  child: _headerCell('ACTION', align: TextAlign.end),
                 ),
               ],
             ),
@@ -143,7 +143,7 @@ class RecentOrdersTable extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: order['statusColor'].withOpacity(0.1),
+                            color: order['statusColor'].withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -178,7 +178,7 @@ class RecentOrdersTable extends StatelessWidget {
     );
   }
 
-  Widget _HeaderCell(String text, {TextAlign align = TextAlign.start}) {
+  Widget _headerCell(String text, {TextAlign align = TextAlign.start}) {
     return Text(
       text,
       textAlign: align,

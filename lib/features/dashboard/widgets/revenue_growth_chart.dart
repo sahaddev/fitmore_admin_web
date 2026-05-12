@@ -21,7 +21,7 @@ class _RevenueGrowthChartState extends State<RevenueGrowthChart> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -211,8 +211,8 @@ class _RevenueGrowthChartState extends State<RevenueGrowthChart> {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          Color(0xFF258fb0).withOpacity(0.2),
-                          Color(0xFF258fb0).withOpacity(0.0),
+                          Color(0xFF258fb0).withValues(alpha: 0.2),
+                          Color(0xFF258fb0).withValues(alpha: 0.0),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,

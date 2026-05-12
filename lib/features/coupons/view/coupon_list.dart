@@ -27,10 +27,7 @@ class _CouponListPageState extends State<CouponListPage> {
           const DashboardHeader(title: 'Coupons & Marketing'),
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 2.w,
-                vertical: 2.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -57,464 +54,429 @@ class _CouponListPageState extends State<CouponListPage> {
                     ],
                   ),
 
-                        SizedBox(height: 3.h),
+                  SizedBox(height: 3.h),
 
-                        // Create New Coupon Card
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    LucideIcons.plusCircle,
-                                    size: 14.sp,
-                                    color: Colors.grey[400],
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'CREATE NEW COUPON',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[400],
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 2.h),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: _InputGroup(
-                                      label: 'Coupon Code',
-                                      child: TextField(
-                                        controller: _codeController,
-                                        style: GoogleFonts.robotoMono(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        decoration: InputDecoration(
-                                          suffixIcon: Icon(
-                                            Icons.refresh,
-                                            size: 16,
-                                            color: const Color(0xFF258fb0),
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            borderSide: BorderSide(
-                                              color: Colors.grey[300]!,
-                                            ),
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 14,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 1.5.w),
-                                  Expanded(
-                                    flex: 2,
-                                    child: _InputGroup(
-                                      label: 'Discount Type',
-                                      child: Container(
-                                        height: 48, // Match textfield height
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey[300]!,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: GestureDetector(
-                                                onTap: () => setState(
-                                                  () => _discountType =
-                                                      'Percentage',
-                                                ),
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        _discountType ==
-                                                            'Percentage'
-                                                        ? const Color(
-                                                            0xFFEAF6F9,
-                                                          )
-                                                        : Colors.transparent,
-                                                    borderRadius:
-                                                        const BorderRadius.horizontal(
-                                                          left: Radius.circular(
-                                                            7,
-                                                          ),
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    'Percentage',
-                                                    style: GoogleFonts.inter(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color:
-                                                          _discountType ==
-                                                              'Percentage'
-                                                          ? const Color(
-                                                              0xFF258fb0,
-                                                            )
-                                                          : Colors.grey[600],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 1,
-                                              color: Colors.grey[300],
-                                            ),
-                                            Expanded(
-                                              child: GestureDetector(
-                                                onTap: () => setState(
-                                                  () => _discountType =
-                                                      'Fixed Amount',
-                                                ),
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        _discountType ==
-                                                            'Fixed Amount'
-                                                        ? const Color(
-                                                            0xFFEAF6F9,
-                                                          )
-                                                        : Colors.transparent,
-                                                    borderRadius:
-                                                        const BorderRadius.horizontal(
-                                                          right:
-                                                              Radius.circular(
-                                                                7,
-                                                              ),
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    'Fixed Amount',
-                                                    style: GoogleFonts.inter(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color:
-                                                          _discountType ==
-                                                              'Fixed Amount'
-                                                          ? const Color(
-                                                              0xFF258fb0,
-                                                            )
-                                                          : Colors.grey[600],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 1.5.w),
-                                  Expanded(
-                                    flex: 1,
-                                    child: _InputGroup(
-                                      label: 'Discount Value',
-                                      child: TextField(
-                                        controller: _valueController,
-                                        style: GoogleFonts.inter(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        decoration: InputDecoration(
-                                          suffixText:
-                                              _discountType == 'Percentage'
-                                              ? '%'
-                                              : '\$',
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            borderSide: BorderSide(
-                                              color: Colors.grey[300]!,
-                                            ),
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                                vertical: 14,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 2.w),
-                                  Expanded(
-                                    flex: 2,
-                                    child: SizedBox(
-                                      height: 48,
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {},
-                                        icon: const Icon(
-                                          LucideIcons.zap,
-                                          size: 18,
-                                        ),
-                                        label: const Text('Generate Campaign'),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFF258fb0,
-                                          ),
-                                          foregroundColor: Colors.white,
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                  // Create New Coupon Card
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
-
-                        SizedBox(height: 3.h),
-
-                        // Stats Row
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Row(
                           children: [
-                            Expanded(
-                              child: _StatCard(
-                                label: 'TOTAL REDEMPTIONS',
-                                value: '12,842',
-                                trend: '+14%',
-                                isPositive: true,
-                              ),
+                            Icon(
+                              LucideIcons.plusCircle,
+                              size: 14.sp,
+                              color: Colors.grey[400],
                             ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: _StatCard(
-                                label: 'ACTIVE CAMPAIGNS',
-                                value: '8',
-                                subtext: 'Across 3 categories',
-                              ),
-                            ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: _StatCard(
-                                label: 'REVENUE IMPACT',
-                                value: '\$45.2k',
-                                subtext: 'Last 30 days',
-                                subtextColor: const Color(0xFF258fb0),
-                              ),
-                            ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: _StatCard(
-                                label: 'AVG. ORDER LIFT',
-                                value: '22.4%',
-                                trend: '+5%',
-                                isPositive: true,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 3.h),
-
-                        // Active Campaigns Header
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF258fb0),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Icon(
-                                LucideIcons.ticket,
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
+                            SizedBox(width: 8),
                             Text(
-                              'Active Campaigns',
+                              'CREATE NEW COUPON',
                               style: GoogleFonts.inter(
-                                fontSize: 13.sp,
+                                fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const Spacer(),
-                            OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(LucideIcons.filter, size: 14),
-                              label: const Text('Filter'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.black87,
-                                side: BorderSide(color: Colors.grey[300]!),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
-                            OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(LucideIcons.list, size: 14),
-                              label: const Text('Latest'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.black87,
-                                side: BorderSide(color: Colors.grey[300]!),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
+                                color: Colors.grey[400],
+                                letterSpacing: 1,
                               ),
                             ),
                           ],
                         ),
-
                         SizedBox(height: 2.h),
-
-                        // Campaigns Grid
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Wrap(
-                              spacing: 1.5.w,
-                              runSpacing: 1.5.w,
-                              children: [
-                                _CampaignCard(
-                                  width:
-                                      (constraints.maxWidth - 3.w) /
-                                      3, // 3 column approx
-                                  code: 'SUMMER25',
-                                  status: 'ACTIVE',
-                                  title: '25% Discount',
-                                  desc: 'Applicable on all beachwear items',
-                                  progress: 0.742,
-                                  progressLabel: '742 / 1000',
-                                  dateLabel: 'Ends Sep 15, 2024',
-                                  dateIcon: LucideIcons.calendarDays,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: _InputGroup(
+                                label: 'Coupon Code',
+                                child: TextField(
+                                  controller: _codeController,
+                                  style: GoogleFonts.robotoMono(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  decoration: InputDecoration(
+                                    suffixIcon: Icon(
+                                      Icons.refresh,
+                                      size: 16,
+                                      color: const Color(0xFF258fb0),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey[300]!,
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                  ),
                                 ),
-                                _CampaignCard(
-                                  width: (constraints.maxWidth - 3.w) / 3,
-                                  code: 'WELCOME10',
-                                  status: 'EXPIRED',
-                                  title: '10% Off First Order',
-                                  desc: 'New customer acquisition campaign',
-                                  progress: 1.0,
-                                  progressLabel: '5,000 / 5,000',
-                                  dateLabel: 'Ended Jan 30, 2024',
-                                  dateIcon: LucideIcons.history,
-                                  isExpired: true,
-                                ),
-                                _CampaignCard(
-                                  width: (constraints.maxWidth - 3.w) / 3,
-                                  code: 'VIPACCESS',
-                                  status: 'SCHEDULED',
-                                  title: '\$50.00 Off',
-                                  desc: 'Loyalty reward for tier 3 members',
-                                  limitLabel: 'Unlimited Usage',
-                                  dateLabel: 'Starts Oct 01, 2024',
-                                  dateIcon: LucideIcons.calendarClock,
-                                  isScheduled: true,
-                                ),
-                                _CampaignCard(
-                                  width: (constraints.maxWidth - 3.w) / 3,
-                                  code: 'FLASH50',
-                                  status: 'ENDING SOON',
-                                  title: '50% Clearance',
-                                  desc: 'Inventory liquidation event',
-                                  progress: 0.96,
-                                  progressLabel: '2,401 / 2,500',
-                                  dateLabel: 'Expires in 4 hours',
-                                  dateIcon: LucideIcons.timer,
-                                  isEndingSoon: true,
-                                ),
-                                _CampaignCard(
-                                  width: (constraints.maxWidth - 3.w) / 3,
-                                  code: 'FREESHIP',
-                                  status: 'ACTIVE',
-                                  title: 'Free Shipping',
-                                  desc: 'Orders above \$150',
-                                  progress: 0.45,
-                                  progressLabel: '+124 users',
-                                  progressLabelLeft: 'Weekly Usage',
-                                  dateLabel: 'Never Expires',
-                                  dateIcon: LucideIcons.calendarCheck,
-                                ),
-                                // Add Card
-                                Container(
-                                  width: (constraints.maxWidth - 3.w) / 3,
-                                  height: 240, // Approx height matching others
+                              ),
+                            ),
+                            SizedBox(width: 1.5.w),
+                            Expanded(
+                              flex: 2,
+                              child: _InputGroup(
+                                label: 'Discount Type',
+                                child: Container(
+                                  height: 48, // Match textfield height
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[50],
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: DottedBorder(
+                                    border: Border.all(
                                       color: Colors.grey[300]!,
                                     ),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  child: Row(
                                     children: [
-                                      Icon(
-                                        LucideIcons.plus,
-                                        size: 24.sp,
-                                        color: Colors.grey[400],
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () => setState(
+                                            () => _discountType = 'Percentage',
+                                          ),
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  _discountType == 'Percentage'
+                                                  ? const Color(0xFFEAF6F9)
+                                                  : Colors.transparent,
+                                              borderRadius:
+                                                  const BorderRadius.horizontal(
+                                                    left: Radius.circular(7),
+                                                  ),
+                                            ),
+                                            child: Text(
+                                              'Percentage',
+                                              style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    _discountType ==
+                                                        'Percentage'
+                                                    ? const Color(0xFF258fb0)
+                                                    : Colors.grey[600],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      SizedBox(height: 1.h),
-                                      Text(
-                                        'QUICK CAMPAIGN',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 9.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[400],
-                                          letterSpacing: 1,
+                                      Container(
+                                        width: 1,
+                                        color: Colors.grey[300],
+                                      ),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () => setState(
+                                            () =>
+                                                _discountType = 'Fixed Amount',
+                                          ),
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  _discountType ==
+                                                      'Fixed Amount'
+                                                  ? const Color(0xFFEAF6F9)
+                                                  : Colors.transparent,
+                                              borderRadius:
+                                                  const BorderRadius.horizontal(
+                                                    right: Radius.circular(7),
+                                                  ),
+                                            ),
+                                            child: Text(
+                                              'Fixed Amount',
+                                              style: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    _discountType ==
+                                                        'Fixed Amount'
+                                                    ? const Color(0xFF258fb0)
+                                                    : Colors.grey[600],
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            );
-                          },
+                              ),
+                            ),
+                            SizedBox(width: 1.5.w),
+                            Expanded(
+                              flex: 1,
+                              child: _InputGroup(
+                                label: 'Discount Value',
+                                child: TextField(
+                                  controller: _valueController,
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  decoration: InputDecoration(
+                                    suffixText: _discountType == 'Percentage'
+                                        ? '%'
+                                        : '\$',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey[300]!,
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 2.w),
+                            Expanded(
+                              flex: 2,
+                              child: SizedBox(
+                                height: 48,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(LucideIcons.zap, size: 18),
+                                  label: const Text('Generate Campaign'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF258fb0),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 5.h),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 3.h),
+
+                  // Stats Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          label: 'TOTAL REDEMPTIONS',
+                          value: '12,842',
+                          trend: '+14%',
+                          isPositive: true,
+                        ),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      Expanded(
+                        child: _StatCard(
+                          label: 'ACTIVE CAMPAIGNS',
+                          value: '8',
+                          subtext: 'Across 3 categories',
+                        ),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      Expanded(
+                        child: _StatCard(
+                          label: 'REVENUE IMPACT',
+                          value: '\$45.2k',
+                          subtext: 'Last 30 days',
+                          subtextColor: const Color(0xFF258fb0),
+                        ),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      Expanded(
+                        child: _StatCard(
+                          label: 'AVG. ORDER LIFT',
+                          value: '22.4%',
+                          trend: '+5%',
+                          isPositive: true,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 3.h),
+
+                  // Active Campaigns Header
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF258fb0),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          LucideIcons.ticket,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      Text(
+                        'Active Campaigns',
+                        style: GoogleFonts.inter(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const Spacer(),
+                      OutlinedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(LucideIcons.filter, size: 14),
+                        label: const Text('Filter'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black87,
+                          side: BorderSide(color: Colors.grey[300]!),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      OutlinedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(LucideIcons.list, size: 14),
+                        label: const Text('Latest'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black87,
+                          side: BorderSide(color: Colors.grey[300]!),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 2.h),
+
+                  // Campaigns Grid
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Wrap(
+                        spacing: 1.5.w,
+                        runSpacing: 1.5.w,
+                        children: [
+                          _CampaignCard(
+                            width:
+                                (constraints.maxWidth - 3.w) /
+                                3, // 3 column approx
+                            code: 'SUMMER25',
+                            status: 'ACTIVE',
+                            title: '25% Discount',
+                            desc: 'Applicable on all beachwear items',
+                            progress: 0.742,
+                            progressLabel: '742 / 1000',
+                            dateLabel: 'Ends Sep 15, 2024',
+                            dateIcon: LucideIcons.calendarDays,
+                          ),
+                          _CampaignCard(
+                            width: (constraints.maxWidth - 3.w) / 3,
+                            code: 'WELCOME10',
+                            status: 'EXPIRED',
+                            title: '10% Off First Order',
+                            desc: 'New customer acquisition campaign',
+                            progress: 1.0,
+                            progressLabel: '5,000 / 5,000',
+                            dateLabel: 'Ended Jan 30, 2024',
+                            dateIcon: LucideIcons.history,
+                            isExpired: true,
+                          ),
+                          _CampaignCard(
+                            width: (constraints.maxWidth - 3.w) / 3,
+                            code: 'VIPACCESS',
+                            status: 'SCHEDULED',
+                            title: '\$50.00 Off',
+                            desc: 'Loyalty reward for tier 3 members',
+                            limitLabel: 'Unlimited Usage',
+                            dateLabel: 'Starts Oct 01, 2024',
+                            dateIcon: LucideIcons.calendarClock,
+                            isScheduled: true,
+                          ),
+                          _CampaignCard(
+                            width: (constraints.maxWidth - 3.w) / 3,
+                            code: 'FLASH50',
+                            status: 'ENDING SOON',
+                            title: '50% Clearance',
+                            desc: 'Inventory liquidation event',
+                            progress: 0.96,
+                            progressLabel: '2,401 / 2,500',
+                            dateLabel: 'Expires in 4 hours',
+                            dateIcon: LucideIcons.timer,
+                            isEndingSoon: true,
+                          ),
+                          _CampaignCard(
+                            width: (constraints.maxWidth - 3.w) / 3,
+                            code: 'FREESHIP',
+                            status: 'ACTIVE',
+                            title: 'Free Shipping',
+                            desc: 'Orders above \$150',
+                            progress: 0.45,
+                            progressLabel: '+124 users',
+                            progressLabelLeft: 'Weekly Usage',
+                            dateLabel: 'Never Expires',
+                            dateIcon: LucideIcons.calendarCheck,
+                          ),
+                          // Add Card
+                          Container(
+                            width: (constraints.maxWidth - 3.w) / 3,
+                            height: 240, // Approx height matching others
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                              border: DottedBorder(color: Colors.grey[300]!),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  LucideIcons.plus,
+                                  size: 24.sp,
+                                  color: Colors.grey[400],
+                                ),
+                                SizedBox(height: 1.h),
+                                Text(
+                                  'QUICK CAMPAIGN',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400],
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  SizedBox(height: 5.h),
+                ],
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -688,7 +650,7 @@ class _CampaignCard extends StatelessWidget {
         boxShadow: [
           if (isEndingSoon)
             BoxShadow(
-              color: Colors.orange.withOpacity(0.05),
+              color: Colors.orange.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

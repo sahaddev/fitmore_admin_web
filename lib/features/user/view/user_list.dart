@@ -23,10 +23,7 @@ class UserListPage extends StatelessWidget {
             child: Consumer<UserViewModel>(
               builder: (context, viewModel, child) {
                 return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 2.w,
-                    vertical: 2.h,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -160,7 +157,7 @@ class UserListPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

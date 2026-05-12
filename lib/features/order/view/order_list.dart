@@ -28,10 +28,7 @@ class _OrderListPageState extends State<OrderListPage> {
           // Scrollable Content
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 2.w,
-                vertical: 2.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
               child: Column(
                 children: [
                   // Stats Row
@@ -82,7 +79,7 @@ class _OrderListPageState extends State<OrderListPage> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.02),
+                          color: Colors.black.withValues(alpha: 0.02),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -167,22 +164,13 @@ class _OrderListPageState extends State<OrderListPage> {
                                 flex: 2,
                                 child: _TableHeader('ORDER ID'),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('DATE'),
-                              ),
+                              Expanded(flex: 2, child: _TableHeader('DATE')),
                               Expanded(
                                 flex: 3,
                                 child: _TableHeader('CUSTOMER'),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('TOTAL'),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('STATUS'),
-                              ),
+                              Expanded(flex: 2, child: _TableHeader('TOTAL')),
+                              Expanded(flex: 2, child: _TableHeader('STATUS')),
                               Expanded(
                                 flex: 1,
                                 child: _TableHeader(
@@ -240,8 +228,7 @@ class _OrderListPageState extends State<OrderListPage> {
 
                         // Footer / Pagination
                         Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Showing 1 to 5 of 1,284 entries',
@@ -256,9 +243,7 @@ class _OrderListPageState extends State<OrderListPage> {
                                   onPressed: () {},
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.grey[700],
-                                    side: BorderSide(
-                                      color: Colors.grey[300]!,
-                                    ),
+                                    side: BorderSide(color: Colors.grey[300]!),
                                   ),
                                   child: const Text('Previous'),
                                 ),
@@ -272,18 +257,14 @@ class _OrderListPageState extends State<OrderListPage> {
                                   ),
                                   child: Text(
                                     '...',
-                                    style: TextStyle(
-                                      color: Colors.grey[400],
-                                    ),
+                                    style: TextStyle(color: Colors.grey[400]),
                                   ),
                                 ),
                                 OutlinedButton(
                                   onPressed: () {},
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.grey[700],
-                                    side: BorderSide(
-                                      color: Colors.grey[300]!,
-                                    ),
+                                    side: BorderSide(color: Colors.grey[300]!),
                                   ),
                                   child: const Text('Next'),
                                 ),
@@ -333,7 +314,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
