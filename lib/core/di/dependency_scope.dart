@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../features/products/data/product_api.dart';
-import '../../features/products/data/product_repository.dart';
-import '../../features/products/view_model/product_view_model.dart';
-import '../../features/user/data/user_api.dart';
-import '../../features/user/data/user_repository.dart';
-import '../../features/user/view_model/user_view_model.dart';
+// Products feature
+import '../../features/products/data/datasources/product_remote_data_source.dart';
+import '../../features/products/data/repositories/product_repository_impl.dart';
+import '../../features/products/domain/usecases/get_products_usecase.dart';
+import '../../features/products/domain/usecases/add_product_usecase.dart';
+import '../../features/products/presentation/view_model/product_view_model.dart';
+// User feature
+import '../../features/user/data/datasources/user_remote_data_source.dart';
+import '../../features/user/data/repositories/user_repository_impl.dart';
+import '../../features/user/domain/usecases/get_users_usecase.dart';
+import '../../features/user/presentation/view_model/user_view_model.dart';
 
 class DependencyScope extends StatefulWidget {
   final Widget child;
@@ -25,22 +30,30 @@ class DependencyScope extends StatefulWidget {
 }
 
 class DependencyScopeState extends State<DependencyScope> {
-  late final ProductApi productApi;
-  late final UserApi userApi;
-  late final ProductRepository productRepository;
-  late final UserRepository userRepository;
+  // ViewModels (Publicly accessible)
   late final ProductViewModel productViewModel;
   late final UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
-    productApi = ProductApi();
-    userApi = UserApi();
-    productRepository = ProductRepository(productApi);
-    userRepository = UserRepository(userApi);
-    productViewModel = ProductViewModel(productRepository);
-    userViewModel = UserViewModel(userRepository);
+    
+    // 1. Data Sources
+    final productRemoteDataSource = ProductRemoteDataSource();
+    final userRemoteDataSource = UserRemoteDataSource();
+
+    // 2. Repositories
+    final productRepository = ProductRepositoryImpl(productRemoteDataSource);
+    final userRepository = UserRepositoryImpl(userRemoteDataSource);
+
+    // 3. Use Cases
+    final getProductsUseCase = GetProductsUseCase(productRepository);
+    final addProductUseCase = AddProductUseCase(productRepository);
+    final getUsersUseCase = GetUsersUseCase(userRepository);
+
+    // 4. ViewModels
+    productViewModel = ProductViewModel(getProductsUseCase, addProductUseCase);
+    userViewModel = UserViewModel(getUsersUseCase);
 
     // Initial data fetching
     productViewModel.fetchProducts();

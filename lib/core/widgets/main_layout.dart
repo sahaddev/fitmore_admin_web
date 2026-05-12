@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fitmore_web/core/routes/app_routers.dart';
 import 'package:fitmore_web/core/routes/navigation_service.dart';
-import '../../features/dashboard/widgets/dashboard_sidebar.dart';
+import '../../features/dashboard/presentation/widgets/dashboard_sidebar.dart';
 
 class MainLayout extends StatelessWidget {
   final Widget child;

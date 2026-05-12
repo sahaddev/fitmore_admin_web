@@ -1,11 +1,11 @@
 import 'package:fitmore_web/core/routes/navigation_service.dart';
-import 'package:fitmore_web/features/auth/view/login_page.dart';
-import 'package:fitmore_web/features/coupons/view/coupon_list.dart';
-import 'package:fitmore_web/features/dashboard/view/main_dashboard.dart';
-import 'package:fitmore_web/features/order/view/order_list.dart';
-import 'package:fitmore_web/features/products/view/add_product_page.dart';
-import 'package:fitmore_web/features/products/view/product_list_page.dart';
-import 'package:fitmore_web/features/user/view/user_list.dart';
+import 'package:fitmore_web/features/auth/presentation/view/login_page.dart';
+import 'package:fitmore_web/features/coupons/presentation/view/coupon_list.dart';
+import 'package:fitmore_web/features/dashboard/presentation/view/main_dashboard.dart';
+import 'package:fitmore_web/features/order/presentation/view/order_list.dart';
+import 'package:fitmore_web/features/products/presentation/view/add_product_page.dart';
+import 'package:fitmore_web/features/products/presentation/view/product_list_page.dart';
+import 'package:fitmore_web/features/user/presentation/view/user_list.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routers.dart';
