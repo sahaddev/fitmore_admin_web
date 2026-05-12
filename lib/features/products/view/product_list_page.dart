@@ -8,7 +8,6 @@ import 'package:sizer/sizer.dart';
 import '../view_model/product_view_model.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../dashboard/widgets/dashboard_sidebar.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -36,271 +35,260 @@ class _ProductListPageState extends State<ProductListPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          // Sidebar
-          const DashboardSidebar(currentPath: '/products'),
+          // Global Header
+          const DashboardHeader(title: 'Products'),
 
-          // Main Content
+          // Scrollable Page Content
           Expanded(
-            child: Column(
-              children: [
-                // Global Header
-                const DashboardHeader(title: 'Products'),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: 2.w,
+                vertical: 2.h,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Page Header (Title + Export)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Product Inventory',
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 0.5.h),
+                          Text(
+                            'Monitoring 2,481 items across 12 categories',
+                            style: GoogleFonts.inter(
+                              fontSize: 10.sp,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () {},
+                            icon: Icon(LucideIcons.download, size: 14.sp),
+                            label: const Text('Export CSV'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.grey[700],
+                              side: BorderSide(color: Colors.grey[300]!),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 2.w,
+                                vertical: 1.5.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
 
-                // Scrollable Page Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 2.h,
+                  SizedBox(height: 3.h),
+
+                  // Filters & Search Bar
+                  Row(
+                    children: [
+                      _FilterButton(
+                        label: 'All Products',
+                        isActive: _selectedFilter == 'All Products',
+                        onTap: () => setState(
+                          () => _selectedFilter = 'All Products',
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      _FilterDropdown(label: 'Electronics'),
+                      SizedBox(width: 1.w),
+                      _FilterDropdown(label: 'Furniture'),
+                      SizedBox(width: 1.w),
+                      _FilterChip(
+                        label: 'Low Stock',
+                        color: Colors.orange,
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 3.h),
+
+                  // Products Table
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Page Header (Title + Export)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Product Inventory',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                SizedBox(height: 0.5.h),
-                                Text(
-                                  'Monitoring 2,481 items across 12 categories',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10.sp,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(LucideIcons.download, size: 14.sp),
-                                  label: const Text('Export CSV'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.grey[700],
-                                    side: BorderSide(color: Colors.grey[300]!),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 2.w,
-                                      vertical: 1.5.h,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 3.h),
-
-                        // Filters & Search Bar
-                        Row(
-                          children: [
-                            _FilterButton(
-                              label: 'All Products',
-                              isActive: _selectedFilter == 'All Products',
-                              onTap: () => setState(
-                                () => _selectedFilter = 'All Products',
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
-                            _FilterDropdown(label: 'Electronics'),
-                            SizedBox(width: 1.w),
-                            _FilterDropdown(label: 'Furniture'),
-                            SizedBox(width: 1.w),
-                            _FilterChip(
-                              label: 'Low Stock',
-                              color: Colors.orange,
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 3.h),
-
-                        // Products Table
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              // Table Header
-                              Padding(
-                                padding: EdgeInsets.all(1.5.w),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: _TableHeader('PRODUCT'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('CATEGORY'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('PRICE'),
-                                    ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: _TableHeader('STOCK STATUS'),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: _TableHeader(
-                                        'ACTIONS',
-                                        align: TextAlign.end,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Divider(height: 1, color: Colors.grey[100]),
-                              // Table Rows (Mock Data)
-                              _ProductRow(
-                                name: 'Studio Pro Wireless',
-                                sku: 'HEAD-PRO-01',
-                                category: 'Electronics',
-                                price: 249.00,
-                                stock: 82,
-                                status: 'In Stock',
-                                imageColor: Colors.black,
-                              ),
-                              _ProductRow(
-                                name: 'Nordic Office Chair',
-                                sku: 'FURN-CHR-99',
-                                category: 'Furniture',
-                                price: 320.50,
-                                stock: 12,
-                                status: 'Low Stock',
-                                imageColor: Colors.brown[300]!,
-                              ),
-                              _ProductRow(
-                                name: 'Minimalist Timepiece',
-                                sku: 'ACC-WCH-04',
-                                category: 'Accessories',
-                                price: 159.00,
-                                stock: 45,
-                                status: 'In Stock',
-                                imageColor: Colors.blueGrey,
-                              ),
-                              _ProductRow(
-                                name: 'Eco Wooden Lamp',
-                                sku: 'FURN-LMP-02',
-                                category: 'Furniture',
-                                price: 89.99,
-                                stock: 3,
-                                status: 'Critical',
-                                imageColor: Colors.amber[800]!,
-                              ),
-
-                              // Custom Add Product Button Row within/below table or separate
-                            ],
-                          ),
-                        ),
-                        // Pagination (Mock)
+                        // Table Header
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 2.h),
+                          padding: EdgeInsets.all(1.5.w),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'SHOWING 1 TO 10 OF 2,481 PRODUCTS',
-                                style: GoogleFonts.inter(
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[400],
-                                  letterSpacing: 1,
-                                ),
+                              Expanded(
+                                flex: 3,
+                                child: _TableHeader('PRODUCT'),
                               ),
-                              Row(
-                                children: [
-                                  _PaginationButton(
-                                    icon: LucideIcons.chevronLeft,
-                                  ),
-                                  _PaginationButton(text: '1', isActive: true),
-                                  _PaginationButton(text: '2'),
-                                  _PaginationButton(text: '3'),
-                                  Text(
-                                    ' ... ',
-                                    style: TextStyle(color: Colors.grey[400]),
-                                  ),
-                                  _PaginationButton(text: '248'),
-                                  _PaginationButton(
-                                    icon: LucideIcons.chevronRight,
-                                  ),
-                                ],
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('CATEGORY'),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('PRICE'),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: _TableHeader('STOCK STATUS'),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: _TableHeader(
+                                  'ACTIONS',
+                                  align: TextAlign.end,
+                                ),
                               ),
                             ],
                           ),
                         ),
-
-                        SizedBox(height: 2.h),
-
-                        // Bottom Stats
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _BottomStatCard(
-                                title: 'TOP SELLING',
-                                value: 'Wireless Headphones',
-                                icon: LucideIcons.trendingUp,
-                                iconColor: Colors.green,
-                                isPrimary: false,
-                              ),
-                            ),
-                            SizedBox(width: 2.w),
-                            Expanded(
-                              child: _BottomStatCard(
-                                title: 'LOW STOCK ITEMS',
-                                value: '42 Products',
-                                icon: LucideIcons.alertTriangle,
-                                iconColor: Colors.orange,
-                                isPrimary: false,
-                              ),
-                            ),
-                            SizedBox(width: 2.w),
-                            Expanded(
-                              child: _BottomStatCard(
-                                title: 'TOTAL INVENTORY VALUE',
-                                value: '\$1,248,390.00',
-                                icon: LucideIcons.clipboardList,
-                                iconColor: Colors.white,
-                                isPrimary: true, // Blue card
-                              ),
-                            ),
-                          ],
+                        Divider(height: 1, color: Colors.grey[100]),
+                        // Table Rows (Mock Data)
+                        _ProductRow(
+                          name: 'Studio Pro Wireless',
+                          sku: 'HEAD-PRO-01',
+                          category: 'Electronics',
+                          price: 249.00,
+                          stock: 82,
+                          status: 'In Stock',
+                          imageColor: Colors.black,
                         ),
-                        SizedBox(height: 5.h),
+                        _ProductRow(
+                          name: 'Nordic Office Chair',
+                          sku: 'FURN-CHR-99',
+                          category: 'Furniture',
+                          price: 320.50,
+                          stock: 12,
+                          status: 'Low Stock',
+                          imageColor: Colors.brown[300]!,
+                        ),
+                        _ProductRow(
+                          name: 'Minimalist Timepiece',
+                          sku: 'ACC-WCH-04',
+                          category: 'Accessories',
+                          price: 159.00,
+                          stock: 45,
+                          status: 'In Stock',
+                          imageColor: Colors.blueGrey,
+                        ),
+                        _ProductRow(
+                          name: 'Eco Wooden Lamp',
+                          sku: 'FURN-LMP-02',
+                          category: 'Furniture',
+                          price: 89.99,
+                          stock: 3,
+                          status: 'Critical',
+                          imageColor: Colors.amber[800]!,
+                        ),
+
+                        // Custom Add Product Button Row within/below table or separate
                       ],
                     ),
                   ),
-                ),
-              ],
+                  // Pagination (Mock)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'SHOWING 1 TO 10 OF 2,481 PRODUCTS',
+                          style: GoogleFonts.inter(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[400],
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            _PaginationButton(
+                              icon: LucideIcons.chevronLeft,
+                            ),
+                            _PaginationButton(text: '1', isActive: true),
+                            _PaginationButton(text: '2'),
+                            _PaginationButton(text: '3'),
+                            Text(
+                              ' ... ',
+                              style: TextStyle(color: Colors.grey[400]),
+                            ),
+                            _PaginationButton(text: '248'),
+                            _PaginationButton(
+                              icon: LucideIcons.chevronRight,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 2.h),
+
+                  // Bottom Stats
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'TOP SELLING',
+                          value: 'Wireless Headphones',
+                          icon: LucideIcons.trendingUp,
+                          iconColor: Colors.green,
+                          isPrimary: false,
+                        ),
+                      ),
+                      SizedBox(width: 2.w),
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'LOW STOCK ITEMS',
+                          value: '42 Products',
+                          icon: LucideIcons.alertTriangle,
+                          iconColor: Colors.orange,
+                          isPrimary: false,
+                        ),
+                      ),
+                      SizedBox(width: 2.w),
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'TOTAL INVENTORY VALUE',
+                          value: '\$1,248,390.00',
+                          icon: LucideIcons.clipboardList,
+                          iconColor: Colors.white,
+                          isPrimary: true, // Blue card
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         ],

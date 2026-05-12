@@ -5,7 +5,6 @@ import 'package:sizer/sizer.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import '../../dashboard/widgets/dashboard_sidebar.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
 import '../view_model/user_view_model.dart';
 import '../model/user_model.dart';
@@ -17,43 +16,35 @@ class UserListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          const DashboardSidebar(currentPath: '/customers'),
+          const DashboardHeader(title: 'User Management'),
           Expanded(
-            child: Column(
-              children: [
-                const DashboardHeader(title: 'User Management'),
-                Expanded(
-                  child: Consumer<UserViewModel>(
-                    builder: (context, viewModel, child) {
-                      return SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 2.w,
-                          vertical: 2.h,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildPageHeader(viewModel),
-                            SizedBox(height: 3.h),
-                            _buildTabs(viewModel),
-                            SizedBox(height: 2.h),
-                            if (viewModel.isLoading)
-                              const Center(child: CircularProgressIndicator())
-                            else if (viewModel.error != null)
-                              Center(child: Text('Error: ${viewModel.error}'))
-                            else
-                              _buildUsersTable(viewModel),
-                            SizedBox(height: 5.h),
-                          ],
-                        ),
-                      );
-                    },
+            child: Consumer<UserViewModel>(
+              builder: (context, viewModel, child) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 2.w,
+                    vertical: 2.h,
                   ),
-                ),
-              ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPageHeader(viewModel),
+                      SizedBox(height: 3.h),
+                      _buildTabs(viewModel),
+                      SizedBox(height: 2.h),
+                      if (viewModel.isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else if (viewModel.error != null)
+                        Center(child: Text('Error: ${viewModel.error}'))
+                      else
+                        _buildUsersTable(viewModel),
+                      SizedBox(height: 5.h),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],

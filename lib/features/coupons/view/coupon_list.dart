@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../dashboard/widgets/dashboard_sidebar.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
 
 class CouponListPage extends StatefulWidget {
@@ -23,48 +22,40 @@ class _CouponListPageState extends State<CouponListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          // Sidebar
-          const DashboardSidebar(currentPath: '/marketing'),
-
-          // Main Content
+          const DashboardHeader(title: 'Coupons & Marketing'),
           Expanded(
-            child: Column(
-              children: [
-                const DashboardHeader(title: 'Coupons & Marketing'),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 2.h,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Page Title Area
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Coupons & Marketing',
-                              style: GoogleFonts.inter(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 0.5.h),
-                            Text(
-                              'Design and manage promotional codes to drive customer engagement.',
-                              style: GoogleFonts.inter(
-                                fontSize: 10.sp,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: 2.w,
+                vertical: 2.h,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Page Title Area
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Coupons & Marketing',
+                        style: GoogleFonts.inter(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
+                      ),
+                      SizedBox(height: 0.5.h),
+                      Text(
+                        'Design and manage promotional codes to drive customer engagement.',
+                        style: GoogleFonts.inter(
+                          fontSize: 10.sp,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
 
                         SizedBox(height: 3.h),
 
@@ -517,16 +508,13 @@ class _CouponListPageState extends State<CouponListPage> {
                           },
                         ),
                         SizedBox(height: 5.h),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
   }
 }
 

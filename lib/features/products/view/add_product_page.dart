@@ -7,7 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 
 import '../view_model/product_view_model.dart';
-import '../../dashboard/widgets/dashboard_sidebar.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -63,98 +62,90 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          // Sidebar
-          const DashboardSidebar(currentPath: '/products'),
-
-          // Main Content Area
-          Expanded(
-            child: Column(
+          // Top Action Bar
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+            color: Colors.white,
+            child: Row(
               children: [
-                // Top Action Bar
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Products',
-                                style: GoogleFonts.inter(
-                                  color: Colors.grey[500],
-                                  fontSize: 9.sp,
-                                ),
-                              ),
-                              Icon(
-                                Icons.chevron_right,
-                                size: 12.sp,
-                                color: Colors.grey[400],
-                              ),
-                              Text(
-                                'Add New Product',
-                                style: GoogleFonts.inter(
-                                  color: Colors.black87,
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 0.5.h),
-                          Text(
-                            'New Store Listing',
-                            style: GoogleFonts.inter(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () => context.pop(),
-                        child: Text(
-                          'Discard Draft',
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Products',
                           style: GoogleFonts.inter(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10.sp,
+                            color: Colors.grey[500],
+                            fontSize: 9.sp,
                           ),
                         ),
-                      ),
-                      SizedBox(width: 1.w),
-                      ElevatedButton.icon(
-                        onPressed: _onSave,
-                        icon: Icon(LucideIcons.save, size: 14.sp),
-                        label: Text(
-                          'Save Product',
+                        Icon(
+                          Icons.chevron_right,
+                          size: 12.sp,
+                          color: Colors.grey[400],
+                        ),
+                        Text(
+                          'Add New Product',
                           style: GoogleFonts.inter(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF258fb0),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 2.w,
-                            vertical: 1.5.h,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                      ],
+                    ),
+                    SizedBox(height: 0.5.h),
+                    Text(
+                      'New Store Listing',
+                      style: GoogleFonts.inter(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    'Discard Draft',
+                    style: GoogleFonts.inter(
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10.sp,
+                    ),
                   ),
                 ),
+                SizedBox(width: 1.w),
+                ElevatedButton.icon(
+                  onPressed: _onSave,
+                  icon: Icon(LucideIcons.save, size: 14.sp),
+                  label: Text(
+                    'Save Product',
+                    style: GoogleFonts.inter(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF258fb0),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 2.w,
+                      vertical: 1.5.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
                 Divider(height: 1, color: Colors.grey[200]),
 
                 // Scrollable Form Content
@@ -196,10 +187,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget _buildBasicInfoCard() {

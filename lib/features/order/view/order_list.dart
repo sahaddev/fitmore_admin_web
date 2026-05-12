@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../dashboard/widgets/dashboard_sidebar.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
 
 class OrderListPage extends StatefulWidget {
@@ -21,304 +20,287 @@ class _OrderListPageState extends State<OrderListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          // Sidebar
-          const DashboardSidebar(currentPath: '/orders'),
+          // Global Header
+          const DashboardHeader(title: 'Orders Management'),
 
-          // Main Content
+          // Scrollable Content
           Expanded(
-            child: Column(
-              children: [
-                // Global Header
-                const DashboardHeader(title: 'Orders Management'),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: 2.w,
+                vertical: 2.h,
+              ),
+              child: Column(
+                children: [
+                  // Stats Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Total Orders',
+                          value: '1,284',
+                          trend: '+12.5%',
+                          isPositive: true,
+                          icon: LucideIcons.shoppingCart,
+                          iconColor: Colors.blue,
+                        ),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Pending Shipments',
+                          value: '43',
+                          trend: '-2.1%',
+                          isPositive: false,
+                          icon: LucideIcons.truck,
+                          iconColor: Colors.orange,
+                        ),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      Expanded(
+                        child: _StatCard(
+                          title: 'Monthly Revenue',
+                          value: '\$42,500.00',
+                          trend: '+5.4%',
+                          isPositive: true,
+                          icon: LucideIcons.banknote,
+                          iconColor: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                // Scrollable Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 2.h,
+                  SizedBox(height: 3.h),
+
+                  // Filters & Table Container
+                  Container(
+                    padding: EdgeInsets.all(1.5.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        // Stats Row
+                        // Filters Toolbar
                         Row(
                           children: [
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Total Orders',
-                                value: '1,284',
-                                trend: '+12.5%',
-                                isPositive: true,
-                                icon: LucideIcons.shoppingCart,
-                                iconColor: Colors.blue,
+                            _DropdownFilter(
+                              value: _selectedStatus,
+                              items: const [
+                                'All Status',
+                                'Pending',
+                                'Delivered',
+                                'Cancelled',
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _selectedStatus = v!),
+                            ),
+                            SizedBox(width: 1.w),
+                            _DropdownFilter(
+                              value: _selectedTimeRange,
+                              items: const [
+                                'Last 30 Days',
+                                'Last 7 Days',
+                                'Today',
+                              ],
+                              icon: LucideIcons.calendar,
+                              onChanged: (v) =>
+                                  setState(() => _selectedTimeRange = v!),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                LucideIcons.filter,
+                                size: 14.sp,
+                                color: Colors.grey[600],
                               ),
                             ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Pending Shipments',
-                                value: '43',
-                                trend: '-2.1%',
-                                isPositive: false,
-                                icon: LucideIcons.truck,
-                                iconColor: Colors.orange,
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                LucideIcons.download,
+                                size: 14.sp,
+                                color: Colors.grey[600],
                               ),
                             ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: _StatCard(
-                                title: 'Monthly Revenue',
-                                value: '\$42,500.00',
-                                trend: '+5.4%',
-                                isPositive: true,
-                                icon: LucideIcons.banknote,
-                                iconColor: Colors.green,
+                            SizedBox(width: 1.w),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF258fb0),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              child: const Text('Export CSV'),
                             ),
                           ],
                         ),
 
-                        SizedBox(height: 3.h),
+                        SizedBox(height: 2.h),
 
-                        // Filters & Table Container
+                        // Table Header
                         Container(
-                          padding: EdgeInsets.all(1.5.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 1.w,
+                            vertical: 1.5.h,
                           ),
-                          child: Column(
+                          color: Colors.grey[50], // Header bg
+                          child: Row(
                             children: [
-                              // Filters Toolbar
-                              Row(
-                                children: [
-                                  _DropdownFilter(
-                                    value: _selectedStatus,
-                                    items: const [
-                                      'All Status',
-                                      'Pending',
-                                      'Delivered',
-                                      'Cancelled',
-                                    ],
-                                    onChanged: (v) =>
-                                        setState(() => _selectedStatus = v!),
-                                  ),
-                                  SizedBox(width: 1.w),
-                                  _DropdownFilter(
-                                    value: _selectedTimeRange,
-                                    items: const [
-                                      'Last 30 Days',
-                                      'Last 7 Days',
-                                      'Today',
-                                    ],
-                                    icon: LucideIcons.calendar,
-                                    onChanged: (v) =>
-                                        setState(() => _selectedTimeRange = v!),
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      LucideIcons.filter,
-                                      size: 14.sp,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      LucideIcons.download,
-                                      size: 14.sp,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(width: 1.w),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF258fb0),
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 16,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    child: const Text('Export CSV'),
-                                  ),
-                                ],
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('ORDER ID'),
                               ),
-
-                              SizedBox(height: 2.h),
-
-                              // Table Header
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 1.w,
-                                  vertical: 1.5.h,
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('DATE'),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: _TableHeader('CUSTOMER'),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('TOTAL'),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: _TableHeader('STATUS'),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: _TableHeader(
+                                  'ACTIONS',
+                                  align: TextAlign.end,
                                 ),
-                                color: Colors.grey[50], // Header bg
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('ORDER ID'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('DATE'),
-                                    ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: _TableHeader('CUSTOMER'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('TOTAL'),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _TableHeader('STATUS'),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: _TableHeader(
-                                        'ACTIONS',
-                                        align: TextAlign.end,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // Table Rows (Mock Data)
-                              _OrderRow(
-                                id: '#ORD-7721',
-                                date: 'Oct 24, 2023',
-                                name: 'Jane Cooper',
-                                email: 'jane.cooper@example.com',
-                                total: '\$240.50',
-                                status: 'Delivered',
-                              ),
-                              _OrderRow(
-                                id: '#ORD-7722',
-                                date: 'Oct 25, 2023',
-                                name: 'Cody Fisher',
-                                email: 'cody.f@gmail.com',
-                                total: '\$1,205.00',
-                                status: 'Pending',
-                              ),
-                              _OrderRow(
-                                id: '#ORD-7723',
-                                date: 'Oct 25, 2023',
-                                name: 'Esther Howard',
-                                email: 'esther.h@outlook.com',
-                                total: '\$84.20',
-                                status: 'Shipped',
-                              ),
-                              _OrderRow(
-                                id: '#ORD-7724',
-                                date: 'Oct 26, 2023',
-                                name: 'Jenny Wilson',
-                                email: 'jenny.w@mac.com',
-                                total: '\$540.00',
-                                status: 'Delivered',
-                              ),
-                              _OrderRow(
-                                id: '#ORD-7725',
-                                date: 'Oct 26, 2023',
-                                name: 'Kristin Watson',
-                                email: 'kristin@company.com',
-                                total: '\$12.50',
-                                status: 'Cancelled',
-                              ),
-
-                              SizedBox(height: 2.h),
-
-                              // Footer / Pagination
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Showing 1 to 5 of 1,284 entries',
-                                    style: GoogleFonts.inter(
-                                      color: Colors.grey[500],
-                                      fontSize: 9.sp,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      OutlinedButton(
-                                        onPressed: () {},
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.grey[700],
-                                          side: BorderSide(
-                                            color: Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        child: const Text('Previous'),
-                                      ),
-                                      SizedBox(width: 1.w),
-                                      _PageButton('1', isActive: true),
-                                      _PageButton('2'),
-                                      _PageButton('3'),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0,
-                                        ),
-                                        child: Text(
-                                          '...',
-                                          style: TextStyle(
-                                            color: Colors.grey[400],
-                                          ),
-                                        ),
-                                      ),
-                                      OutlinedButton(
-                                        onPressed: () {},
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.grey[700],
-                                          side: BorderSide(
-                                            color: Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        child: const Text('Next'),
-                                      ),
-                                    ],
-                                  ),
-                                ],
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 5.h),
+
+                        // Table Rows (Mock Data)
+                        _OrderRow(
+                          id: '#ORD-7721',
+                          date: 'Oct 24, 2023',
+                          name: 'Jane Cooper',
+                          email: 'jane.cooper@example.com',
+                          total: '\$240.50',
+                          status: 'Delivered',
+                        ),
+                        _OrderRow(
+                          id: '#ORD-7722',
+                          date: 'Oct 25, 2023',
+                          name: 'Cody Fisher',
+                          email: 'cody.f@gmail.com',
+                          total: '\$1,205.00',
+                          status: 'Pending',
+                        ),
+                        _OrderRow(
+                          id: '#ORD-7723',
+                          date: 'Oct 25, 2023',
+                          name: 'Esther Howard',
+                          email: 'esther.h@outlook.com',
+                          total: '\$84.20',
+                          status: 'Shipped',
+                        ),
+                        _OrderRow(
+                          id: '#ORD-7724',
+                          date: 'Oct 26, 2023',
+                          name: 'Jenny Wilson',
+                          email: 'jenny.w@mac.com',
+                          total: '\$540.00',
+                          status: 'Delivered',
+                        ),
+                        _OrderRow(
+                          id: '#ORD-7725',
+                          date: 'Oct 26, 2023',
+                          name: 'Kristin Watson',
+                          email: 'kristin@company.com',
+                          total: '\$12.50',
+                          status: 'Cancelled',
+                        ),
+
+                        SizedBox(height: 2.h),
+
+                        // Footer / Pagination
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Showing 1 to 5 of 1,284 entries',
+                              style: GoogleFonts.inter(
+                                color: Colors.grey[500],
+                                fontSize: 9.sp,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.grey[700],
+                                    side: BorderSide(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: const Text('Previous'),
+                                ),
+                                SizedBox(width: 1.w),
+                                _PageButton('1', isActive: true),
+                                _PageButton('2'),
+                                _PageButton('3'),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                  ),
+                                  child: Text(
+                                    '...',
+                                    style: TextStyle(
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.grey[700],
+                                    side: BorderSide(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: const Text('Next'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         ],
       ),
-      // New Order FAB (Optional, but shown in bottom left of sidebar in design,
-      // but typical Flutter pattern is FloatingActionButton)
-      // The design has a "New Order" button in the sidebar bottom,
-      // but let's stick to standard FAB or leave it as sidebar implementation details
-      // (which we are not editing right now).
-      // I'll add a FAB for convenience matching the style.
     );
   }
 }

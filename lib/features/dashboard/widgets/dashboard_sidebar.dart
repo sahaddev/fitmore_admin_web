@@ -83,12 +83,12 @@ class DashboardSidebar extends StatelessWidget {
             path: '/customers',
             isActive: currentPath.startsWith('/customers'),
           ),
-          _MenuItem(
-            icon: LucideIcons.barChart2,
-            label: 'Reports',
-            path: '/reports',
-            isActive: currentPath.startsWith('/reports'),
-          ),
+          // _MenuItem(
+          //   icon: LucideIcons.barChart2,
+          //   label: 'Reports',
+          //   path: '/reports',
+          //   isActive: currentPath.startsWith('/reports'),
+          // ),
           _MenuItem(
             icon: LucideIcons.percent,
             label: 'Marketing',

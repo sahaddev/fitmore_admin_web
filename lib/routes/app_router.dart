@@ -1,3 +1,4 @@
+import 'package:fitmore_web/core/widgets/main_layout.dart';
 import 'package:fitmore_web/features/dashboard/view/main_dashboard.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/view/login_page.dart';
@@ -12,29 +13,40 @@ class AppRouter {
     initialLocation: '/login',
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-      GoRoute(
-        path: '/products',
-        builder: (context, state) => const ProductListPage(),
-      ),
-      GoRoute(
-        path: '/add-product',
-        builder: (context, state) => const AddProductPage(),
-      ),
-      GoRoute(
-        path: '/dashboard',
-        builder: (context, state) => const MainDashboard(),
-      ),
-      GoRoute(
-        path: '/orders',
-        builder: (context, state) => const OrderListPage(),
-      ),
-      GoRoute(
-        path: '/customers',
-        builder: (context, state) => const UserListPage(),
-      ),
-      GoRoute(
-        path: '/marketing',
-        builder: (context, state) => const CouponListPage(),
+      ShellRoute(
+        builder: (context, state, child) => MainLayout(child: child),
+        routes: [
+          GoRoute(
+            path: '/products',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProductListPage()),
+          ),
+          GoRoute(
+            path: '/add-product',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AddProductPage()),
+          ),
+          GoRoute(
+            path: '/dashboard',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MainDashboard()),
+          ),
+          GoRoute(
+            path: '/orders',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: OrderListPage()),
+          ),
+          GoRoute(
+            path: '/customers',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: UserListPage()),
+          ),
+          GoRoute(
+            path: '/marketing',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CouponListPage()),
+          ),
+        ],
       ),
     ],
   );
