@@ -1,12 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../../../core/di/dependency_scope.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
-
-import '../view_model/product_view_model.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -48,11 +46,13 @@ class _AddProductPageState extends State<AddProductPage> {
   void _onSave() async {
     // For now, just validation
     if (_formKey.currentState!.validate()) {
-      context.read<ProductViewModel>().addProduct(
-        _nameController.text,
-        _descController.text,
-        double.tryParse(_priceController.text) ?? 0.0,
-      );
+      DependencyScope.of(context)
+          .productViewModel
+          .addProduct(
+            _nameController.text,
+            _descController.text,
+            double.tryParse(_priceController.text) ?? 0.0,
+          );
       context.pop();
     }
   }

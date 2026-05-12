@@ -1,3 +1,4 @@
+import 'package:fitmore_web/core/di/service_locator.dart';
 import 'package:fitmore_web/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -7,8 +8,12 @@ import 'core/constants/app_colors.dart';
 import 'core/routes/navigation_service.dart';
 import 'core/widgets/main_layout.dart';
 
+import 'core/di/dependency_scope.dart';
+
 void main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await ServiceLocator.init();
+  runApp(const DependencyScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

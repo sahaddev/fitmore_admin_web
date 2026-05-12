@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../../../core/di/dependency_scope.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
-
-import '../view_model/product_view_model.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../dashboard/widgets/dashboard_header.dart';
@@ -23,17 +21,15 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductViewModel>().fetchProducts();
-    });
   }
-
   @override
   Widget build(BuildContext context) {
-    // We can use the view model later for real data
-    // final productViewModel = context.watch<ProductViewModel>();
+    final productViewModel = DependencyScope.of(context).productViewModel;
 
-    return Scaffold(
+    return ListenableBuilder(
+      listenable: productViewModel,
+      builder: (context, _) {
+        return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
       body: Column(
         children: [
@@ -282,6 +278,8 @@ class _ProductListPageState extends State<ProductListPage> {
         icon: const Icon(Icons.add),
         label: const Text("Add Product"),
       ),
+    );
+      },
     );
   }
 }

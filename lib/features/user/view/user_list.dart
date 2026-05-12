@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
-import 'package:provider/provider.dart';
+import '../../../core/di/dependency_scope.dart';
 import 'package:intl/intl.dart';
 
 import '../../dashboard/widgets/dashboard_header.dart';
@@ -14,38 +14,40 @@ class UserListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final viewModel = DependencyScope.of(context).userViewModel;
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, _) {
+        return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
       body: Column(
         children: [
           const DashboardHeader(title: 'User Management'),
           Expanded(
-            child: Consumer<UserViewModel>(
-              builder: (context, viewModel, child) {
-                return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPageHeader(viewModel),
-                      SizedBox(height: 3.h),
-                      _buildTabs(viewModel),
-                      SizedBox(height: 2.h),
-                      if (viewModel.isLoading)
-                        const Center(child: CircularProgressIndicator())
-                      else if (viewModel.error != null)
-                        Center(child: Text('Error: ${viewModel.error}'))
-                      else
-                        _buildUsersTable(viewModel),
-                      SizedBox(height: 5.h),
-                    ],
-                  ),
-                );
-              },
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPageHeader(viewModel),
+                  SizedBox(height: 3.h),
+                  _buildTabs(viewModel),
+                  SizedBox(height: 2.h),
+                  if (viewModel.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (viewModel.error != null)
+                    Center(child: Text('Error: ${viewModel.error}'))
+                  else
+                    _buildUsersTable(viewModel),
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         ],
       ),
+        );
+      },
     );
   }
 
