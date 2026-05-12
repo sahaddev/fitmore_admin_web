@@ -1,12 +1,10 @@
 import 'dart:ui';
+import 'package:fitmore_web/core/routes/app_routers.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:video_player/video_player.dart';
-import '../view_model/auth_view_model.dart';
 import '../../../../core/utils/validators.dart';
 
 class LoginPage extends StatefulWidget {
@@ -48,18 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   void _onLogin() async {
     if (_formKey.currentState!.validate()) {
       if (!mounted) return;
-      final success = await context.read<AuthViewModel>().login(
-        _emailController.text,
-        _passwordController.text,
-      );
-      if (success && mounted) {
-        context.go('/dashboard');
-      } else if (mounted) {
-        final error = context.read<AuthViewModel>().error;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error ?? 'Login failed')));
-      }
+      Navigator.pushReplacementNamed(context, AppRouters.dashboard);
     }
   }
 
@@ -254,47 +241,32 @@ class _LoginPageState extends State<LoginPage> {
                           // Login Button
                           SizedBox(
                             width: double.infinity,
-                            child: Consumer<AuthViewModel>(
-                              builder: (context, viewModel, _) {
-                                return ElevatedButton(
-                                  onPressed: viewModel.isLoading
-                                      ? null
-                                      : _onLogin,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(
-                                      255,
-                                      141,
-                                      19,
-                                      250,
-                                    ), // Vibrant Purple from image
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 20,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  child: viewModel.isLoading
-                                      ? const SizedBox(
-                                          height: 24,
-                                          width: 24,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : Text(
-                                          'Enter NexusGate',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                );
-                              },
+                            child: ElevatedButton(
+                              onPressed: _onLogin,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  141,
+                                  19,
+                                  250,
+                                ), // Vibrant Purple from image
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                'Enter NexusGate',
+                                style: GoogleFonts.inter(
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
                             ),
                           ),
 
