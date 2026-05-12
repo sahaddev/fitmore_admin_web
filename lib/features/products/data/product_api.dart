@@ -1,4 +1,3 @@
-
 class ProductApi {
   // Mock in-memory storage for demo
   final List<Map<String, dynamic>> _mockProducts = [
@@ -26,7 +25,6 @@ class ProductApi {
 
   Future<List<dynamic>> getProducts() async {
     // MOCK IMPLEMENTATION
-    await Future.delayed(const Duration(milliseconds: 800));
     return _mockProducts;
     // Real: return await _apiService.get(ApiConstants.productsEndpoint);
   }
@@ -35,7 +33,6 @@ class ProductApi {
     Map<String, dynamic> productData,
   ) async {
     // MOCK IMPLEMENTATION
-    await Future.delayed(const Duration(milliseconds: 800));
     final newProduct = {
       'id': DateTime.now().millisecondsSinceEpoch.toString(),
       ...productData,

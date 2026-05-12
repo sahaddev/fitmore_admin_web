@@ -1,8 +1,9 @@
+import 'package:fitmore_web/core/routes/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
-import 'package:go_router/go_router.dart';
+import 'package:fitmore_web/core/routes/app_routers.dart';
 
 class DashboardSidebar extends StatelessWidget {
   final String currentPath;
@@ -62,26 +63,26 @@ class DashboardSidebar extends StatelessWidget {
           _MenuItem(
             icon: LucideIcons.layoutDashboard,
             label: 'Dashboard',
-            path: '/dashboard',
-            isActive: currentPath == '/dashboard',
+            path: AppRouters.dashboard,
+            isActive: currentPath == AppRouters.dashboard,
           ),
           _MenuItem(
             icon: LucideIcons.box,
             label: 'Products',
-            path: '/products',
-            isActive: currentPath.startsWith('/products'),
+            path: AppRouters.products,
+            isActive: currentPath == AppRouters.products,
           ),
           _MenuItem(
             icon: LucideIcons.shoppingCart,
             label: 'Orders',
-            path: '/orders',
-            isActive: currentPath.startsWith('/orders'),
+            path: AppRouters.orders,
+            isActive: currentPath == AppRouters.orders,
           ),
           _MenuItem(
             icon: LucideIcons.users,
             label: 'Customers',
-            path: '/customers',
-            isActive: currentPath.startsWith('/customers'),
+            path: AppRouters.customers,
+            isActive: currentPath == AppRouters.customers,
           ),
           // _MenuItem(
           //   icon: LucideIcons.barChart2,
@@ -92,8 +93,8 @@ class DashboardSidebar extends StatelessWidget {
           _MenuItem(
             icon: LucideIcons.percent,
             label: 'Marketing',
-            path: '/marketing',
-            isActive: currentPath.startsWith('/marketing'),
+            path: AppRouters.marketing,
+            isActive: currentPath == AppRouters.marketing,
           ),
           Spacer(),
           // Bottom Items
@@ -101,8 +102,8 @@ class DashboardSidebar extends StatelessWidget {
           _MenuItem(
             icon: LucideIcons.settings,
             label: 'Settings',
-            path: '/settings',
-            isActive: currentPath.startsWith('/settings'),
+            path: 'settings', // Not yet defined in AppRouters
+            isActive: currentPath == 'settings',
           ),
           SizedBox(height: 2.h),
           Container(
@@ -164,7 +165,7 @@ class _MenuItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
           onTap: () {
-            context.go(path);
+            NavigationService.pushReplacementNamed(path);
           },
           borderRadius: BorderRadius.circular(8),
           child: Padding(

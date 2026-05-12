@@ -5,6 +5,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'core/routes/app_routers.dart';
 import 'core/constants/app_colors.dart';
 import 'core/routes/navigation_service.dart';
+import 'core/widgets/main_layout.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
             DefaultMaterialLocalizations.delegate,
             DefaultWidgetsLocalizations.delegate,
           ],
+          builder: (context, child) => MainLayout(child: child!),
           material: (context, platform) => MaterialAppData(
             theme: ThemeData(
               primaryColor: AppColors.primary,

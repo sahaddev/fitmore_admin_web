@@ -3,7 +3,6 @@ class UserApi {
 
   Future<List<Map<String, dynamic>>> getUsers() async {
     // MOCK IMPLEMENTATION for demo purposes
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
     
     return [
       {

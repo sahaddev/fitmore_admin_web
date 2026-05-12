@@ -3,7 +3,6 @@ class AuthApi {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     // MOCK IMPLEMENTATION for demo purposes
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
     if (email == 'user@example.com' && password == 'password123') {
       return {
         'id': '1',

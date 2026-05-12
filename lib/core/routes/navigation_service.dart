@@ -4,7 +4,14 @@ class NavigationService {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
+  static final ValueNotifier<String> currentRoute = ValueNotifier<String>('');
+
+  static void updateRoute(String routeName) {
+    currentRoute.value = routeName;
+  }
+
   static Future<dynamic> pushNamed(String routeName, {Object? arguments}) {
+    currentRoute.value = routeName;
     return navigatorKey.currentState!.pushNamed(
       routeName,
       arguments: arguments,
@@ -15,6 +22,7 @@ class NavigationService {
     String routeName, {
     Object? arguments,
   }) {
+    currentRoute.value = routeName;
     return navigatorKey.currentState!.pushReplacementNamed(
       routeName,
       arguments: arguments,
@@ -30,6 +38,7 @@ class NavigationService {
     RoutePredicate? predicate,
     Object? arguments,
   }) {
+    currentRoute.value = routeName;
     return navigatorKey.currentState!.pushNamedAndRemoveUntil(
       routeName,
       predicate ?? (route) => false,

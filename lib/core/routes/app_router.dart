@@ -1,3 +1,4 @@
+import 'package:fitmore_web/core/routes/navigation_service.dart';
 import 'package:fitmore_web/features/auth/view/login_page.dart';
 import 'package:fitmore_web/features/coupons/view/coupon_list.dart';
 import 'package:fitmore_web/features/dashboard/view/main_dashboard.dart';
@@ -9,25 +10,60 @@ import 'package:flutter/material.dart';
 
 import 'app_routers.dart';
 
+class NoTransitionPageRoute<T> extends MaterialPageRoute<T> {
+  NoTransitionPageRoute({required super.builder, super.settings});
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child; // No animation
+  }
+}
+
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    if (settings.name != null) {
+      NavigationService.updateRoute(settings.name!);
+    }
     switch (settings.name) {
       case AppRouters.login:
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case AppRouters.products:
-        return MaterialPageRoute(builder: (_) => const ProductListPage());
+        return NoTransitionPageRoute(
+          builder: (_) => const ProductListPage(),
+          settings: settings,
+        );
       case AppRouters.addProduct:
-        return MaterialPageRoute(builder: (_) => const AddProductPage());
+        return NoTransitionPageRoute(
+          builder: (_) => const AddProductPage(),
+          settings: settings,
+        );
       case AppRouters.dashboard:
-        return MaterialPageRoute(builder: (_) => const MainDashboard());
+        return NoTransitionPageRoute(
+          builder: (_) => const MainDashboard(),
+          settings: settings,
+        );
       case AppRouters.orders:
-        return MaterialPageRoute(builder: (_) => const OrderListPage());
+        return NoTransitionPageRoute(
+          builder: (_) => const OrderListPage(),
+          settings: settings,
+        );
       case AppRouters.customers:
-        return MaterialPageRoute(builder: (_) => const UserListPage());
+        return NoTransitionPageRoute(
+          builder: (_) => const UserListPage(),
+          settings: settings,
+        );
       case AppRouters.marketing:
-        return MaterialPageRoute(builder: (_) => const CouponListPage());
+        return NoTransitionPageRoute(
+          builder: (_) => const CouponListPage(),
+          settings: settings,
+        );
       default:
-        return MaterialPageRoute(
+        return NoTransitionPageRoute(
           builder: (_) => const Scaffold(body: Center(child: Text('404'))),
         );
     }
