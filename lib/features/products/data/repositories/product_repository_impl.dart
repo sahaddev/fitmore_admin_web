@@ -1,31 +1,35 @@
 import '../../domain/entities/product.dart';
-import '../../domain/repositories/i_product_repository.dart';
+import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_data_source.dart';
 import '../models/product_model.dart';
 
-class ProductRepositoryImpl implements IProductRepository {
-  final ProductRemoteDataSource remoteDataSource;
-
-  ProductRepositoryImpl(this.remoteDataSource);
+class ProductRepositoryImpl implements ProductRepository {
+  final ProductRemoteDataSource remoteDataSource = ProductRemoteDataSourceImpl();
 
   @override
-  Future<List<Product>> getProducts() async {
-    final productsJson = await remoteDataSource.getProducts();
-    return productsJson.map((json) => ProductModel.fromJson(json)).toList().cast<Product>();
+  Future<List<ProductEntity>> getAllProducts() async {
+    return await remoteDataSource.getAllProducts();
   }
 
   @override
-  Future<Product> addProduct(
-    String name,
-    String description,
-    double price,
-  ) async {
-    final productData = {
-      'name': name,
-      'description': description,
-      'price': price,
-    };
-    final productJson = await remoteDataSource.addProduct(productData);
-    return ProductModel.fromJson(productJson) as Product;
+  Future<void> createProduct(ProductEntity product) async {
+    final productModel = ProductModel.fromEntity(product);
+    return await remoteDataSource.createProduct(productModel);
+  }
+
+  @override
+  Future<ProductEntity> getProductById(int id) async {
+    return await remoteDataSource.getProductById(id);
+  }
+
+  @override
+  Future<void> deleteProduct(int id) async {
+    return await remoteDataSource.deleteProduct(id);
+  }
+
+  @override
+  Future<ProductEntity> updateProduct(int id, ProductEntity product) async {
+    final productModel = ProductModel.fromEntity(product);
+    return await remoteDataSource.updateProduct(id, productModel);
   }
 }

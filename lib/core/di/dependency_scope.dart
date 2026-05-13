@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 // Products feature
-import '../../features/products/data/datasources/product_remote_data_source.dart';
-import '../../features/products/data/repositories/product_repository_impl.dart';
-import '../../features/products/domain/usecases/get_products_usecase.dart';
-import '../../features/products/domain/usecases/add_product_usecase.dart';
-import '../../features/products/presentation/view_model/product_view_model.dart';
+// import '../../features/products/data/datasources/product_remote_data_source.dart';
+// import '../../features/products/data/repositories/product_repository_impl.dart';
+// import '../../features/products/domain/usecases/get_products_usecase.dart';
+// import '../../features/products/domain/usecases/add_product_usecase.dart';
+// import '../../features/products/presentation/view_model/product_view_model.dart';
 // User feature
 
 class DependencyScope extends StatefulWidget {
@@ -29,32 +29,32 @@ class DependencyScope extends StatefulWidget {
 
 class DependencyScopeState extends State<DependencyScope> {
   // ViewModels (Publicly accessible)
-  late final ProductViewModel productViewModel;
+  // late final ProductViewModel productViewModel;
 
   @override
   void initState() {
     super.initState();
 
     // 1. Data Sources
-    final productRemoteDataSource = ProductRemoteDataSource();
+    // final productRemoteDataSource = ProductRemoteDataSource();
 
     // 2. Repositories
-    final productRepository = ProductRepositoryImpl(productRemoteDataSource);
+    // final productRepository = ProductRepositoryImpl(productRemoteDataSource);
 
     // 3. Use Cases
-    final getProductsUseCase = GetProductsUseCase(productRepository);
-    final addProductUseCase = AddProductUseCase(productRepository);
+    // final getProductsUseCase = GetProductsUseCase(productRepository);
+    // final addProductUseCase = AddProductUseCase(productRepository);
 
     // 4. ViewModels
-    productViewModel = ProductViewModel(getProductsUseCase, addProductUseCase);
+    // productViewModel = ProductViewModel(getProductsUseCase, addProductUseCase);
 
     // Initial data fetching
-    productViewModel.fetchProducts();
+    // productViewModel.fetchProducts();
   }
 
   @override
   void dispose() {
-    productViewModel.dispose();
+    // productViewModel.dispose();
     super.dispose();
   }
 

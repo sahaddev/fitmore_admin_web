@@ -3,8 +3,8 @@ import 'package:fitmore_web/features/auth/presentation/view/login_page.dart';
 import 'package:fitmore_web/features/coupons/presentation/view/coupon_list.dart';
 import 'package:fitmore_web/features/dashboard/presentation/view/main_dashboard.dart';
 import 'package:fitmore_web/features/order/presentation/view/order_list.dart';
-import 'package:fitmore_web/features/products/presentation/view/add_product_page.dart';
-import 'package:fitmore_web/features/products/presentation/view/product_list_page.dart';
+import 'package:fitmore_web/features/products/presentation/pages/add_product_page.dart';
+import 'package:fitmore_web/features/products/presentation/pages/product_list_page.dart';
 import 'package:fitmore_web/features/user/presentation/page/user_list.dart';
 import 'package:flutter/material.dart';
 
