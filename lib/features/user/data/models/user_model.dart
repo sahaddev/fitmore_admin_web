@@ -2,44 +2,66 @@ import '../../domain/entities/user.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
-    required super.id,
-    required super.name,
+    super.id,
+    super.mongoId,
+    required super.username,
     required super.email,
-    required super.phoneNumber,
-    required super.ordersCount,
-    required super.createdAt,
-    required super.active,
-    required super.avatarUrl,
     required super.password,
+    super.phoneNumber,
+    super.ordersCount,
+    super.createdAt,
+    super.updatedAt,
+    super.active,
+    super.profileImage,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? '',
-      name: json['username'] ?? '',
+      id: json['id'],
+      mongoId: json['_id'],
+      username: json['username'] ?? '',
       email: json['email'] ?? '',
       password: json['password'] ?? '',
-      phoneNumber: json['phone_number'] ?? '',
+      phoneNumber: json['phone_number'],
       ordersCount: json['ordersCount'] ?? 0,
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
-      active: json['active'] == true,
-      avatarUrl: json['profile_image'] ?? '',
+          ? DateTime.parse(json['created_at'])
+          : (json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : null),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      active: json['active'] ?? true,
+      profileImage: json['profile_image'],
     );
   }
 
-  UserEntity toEntity() {
-    return UserEntity(
-      id: id,
-      name: name,
-      email: email,
-      password: password,
-      phoneNumber: phoneNumber,
-      ordersCount: ordersCount,
-      createdAt: createdAt,
-      active: active,
-      avatarUrl: avatarUrl,
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'email': email,
+      'password': password,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      'ordersCount': ordersCount,
+      'active': active,
+      if (profileImage != null) 'profile_image': profileImage,
+    };
+  }
+
+  factory UserModel.fromEntity(UserEntity entity) {
+    return UserModel(
+      id: entity.id,
+      mongoId: entity.mongoId,
+      username: entity.username,
+      email: entity.email,
+      password: entity.password,
+      phoneNumber: entity.phoneNumber,
+      ordersCount: entity.ordersCount,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      active: entity.active,
+      profileImage: entity.profileImage,
     );
   }
 }

@@ -6,7 +6,6 @@ import '../../features/products/domain/usecases/get_products_usecase.dart';
 import '../../features/products/domain/usecases/add_product_usecase.dart';
 import '../../features/products/presentation/view_model/product_view_model.dart';
 // User feature
-import '../../features/user/presentation/view_model/user_view_model.dart';
 
 class DependencyScope extends StatefulWidget {
   final Widget child;
@@ -31,7 +30,6 @@ class DependencyScope extends StatefulWidget {
 class DependencyScopeState extends State<DependencyScope> {
   // ViewModels (Publicly accessible)
   late final ProductViewModel productViewModel;
-  late final UserViewModel userViewModel;
 
   @override
   void initState() {
@@ -52,13 +50,11 @@ class DependencyScopeState extends State<DependencyScope> {
 
     // Initial data fetching
     productViewModel.fetchProducts();
-    userViewModel.fetchUsers();
   }
 
   @override
   void dispose() {
     productViewModel.dispose();
-    userViewModel.dispose();
     super.dispose();
   }
 

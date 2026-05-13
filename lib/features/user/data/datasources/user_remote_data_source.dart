@@ -7,6 +7,10 @@ import '../../../../core/network/dio_error_handler.dart';
 
 abstract class UserRemoteDataSource {
   Future<List<UserModel>> getUsers();
+  Future<UserModel> createUser(UserModel user);
+  Future<UserModel> getUserById(int id);
+  Future<void> deleteUser(int id);
+  Future<UserModel> updateUser(int id, UserModel user);
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -28,8 +32,92 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       }
     } on DioException catch (e) {
       throw DioErrorHandler.handleDioError(e);
-    } on Exception catch (e) {
+    } catch (e) {
       throw Exception('Failed to load users: $e');
+    }
+  }
+
+  @override
+  Future<UserModel> createUser(UserModel user) async {
+    try {
+      final response = await _dioClient.post(
+        '/api/user',
+        data: user.toJson(),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UserModel.fromJson(response.data['user']);
+      } else {
+        throw DioException(
+          requestOptions: RequestOptions(path: '/api/user'),
+          message: "Failed to create user",
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handleDioError(e);
+    } catch (e) {
+      throw Exception('Failed to create user: $e');
+    }
+  }
+
+  @override
+  Future<UserModel> getUserById(int id) async {
+    try {
+      final response = await _dioClient.get('/user/$id');
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['user']);
+      } else {
+        throw DioException(
+          requestOptions: RequestOptions(path: '/user/$id'),
+          message: "Failed to fetch user",
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handleDioError(e);
+    } catch (e) {
+      throw Exception('Failed to fetch user: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteUser(int id) async {
+    try {
+      final response = await _dioClient.delete(
+        '/api/user',
+        queryParameters: {'id': id},
+      );
+      if (response.statusCode != 200) {
+        throw DioException(
+          requestOptions: RequestOptions(path: '/api/user'),
+          message: "Failed to delete user",
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handleDioError(e);
+    } catch (e) {
+      throw Exception('Failed to delete user: $e');
+    }
+  }
+
+  @override
+  Future<UserModel> updateUser(int id, UserModel user) async {
+    try {
+      final response = await _dioClient.put(
+        '/api/user',
+        queryParameters: {'id': id},
+        data: user.toJson(),
+      );
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['user']);
+      } else {
+        throw DioException(
+          requestOptions: RequestOptions(path: '/api/user'),
+          message: "Failed to update user",
+        );
+      }
+    } on DioException catch (e) {
+      throw DioErrorHandler.handleDioError(e);
+    } catch (e) {
+      throw Exception('Failed to update user: $e');
     }
   }
 }
