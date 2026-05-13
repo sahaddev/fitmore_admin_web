@@ -4,53 +4,149 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/di/dependency_scope.dart';
-import '../../domain/entities/user.dart';
-import '../view_model/user_view_model.dart';
 
-class UserListPage extends StatelessWidget {
+class User {
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String avatarUrl;
+  final int orders;
+  final int? recentOrders;
+  final DateTime joinDate;
+  final String status;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.avatarUrl,
+    required this.orders,
+    this.recentOrders,
+    required this.joinDate,
+    required this.status,
+  });
+}
+
+final List<User> demoUsers = [
+  User(
+    id: 'USR-001',
+    name: 'Sarah Johnson',
+    email: 'sarah.j@example.com',
+    phone: '+1 (555) 123-4567',
+    avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
+    orders: 12,
+    recentOrders: 2,
+    joinDate: DateTime.now().subtract(const Duration(days: 45)),
+    status: 'Active',
+  ),
+  User(
+    id: 'USR-002',
+    name: 'Michael Chen',
+    email: 'm.chen@example.com',
+    phone: '+1 (555) 987-6543',
+    avatarUrl: 'https://i.pravatar.cc/150?u=michael',
+    orders: 5,
+    joinDate: DateTime.now().subtract(const Duration(days: 120)),
+    status: 'Active',
+  ),
+  User(
+    id: 'USR-003',
+    name: 'Emma Wilson',
+    email: 'emma.w@example.com',
+    phone: '+1 (555) 456-7890',
+    avatarUrl: 'https://i.pravatar.cc/150?u=emma',
+    orders: 0,
+    joinDate: DateTime.now().subtract(const Duration(days: 5)),
+    status: 'Active',
+  ),
+  User(
+    id: 'USR-004',
+    name: 'David Rodriguez',
+    email: 'david.r@example.com',
+    phone: '+1 (555) 234-5678',
+    avatarUrl: 'https://i.pravatar.cc/150?u=david',
+    orders: 24,
+    recentOrders: 5,
+    joinDate: DateTime.now().subtract(const Duration(days: 300)),
+    status: 'Flagged',
+  ),
+  User(
+    id: 'USR-005',
+    name: 'Lisa Brown',
+    email: 'lisa.b@example.com',
+    phone: '+1 (555) 876-5432',
+    avatarUrl: 'https://i.pravatar.cc/150?u=lisa',
+    orders: 8,
+    joinDate: DateTime.now().subtract(const Duration(days: 15)),
+    status: 'Active',
+  ),
+  User(
+    id: 'USR-006',
+    name: 'James Smith',
+    email: 'j.smith@example.com',
+    phone: '+1 (555) 345-6789',
+    avatarUrl: 'https://i.pravatar.cc/150?u=james',
+    orders: 2,
+    joinDate: DateTime.now().subtract(const Duration(days: 60)),
+    status: 'Active',
+  ),
+];
+
+class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
 
   @override
+  State<UserListPage> createState() => _UserListPageState();
+}
+
+class _UserListPageState extends State<UserListPage> {
+  String activeTab = 'All Users';
+  bool isLoading = false;
+  List<User> users = demoUsers;
+
+  List<User> get filteredUsers {
+    if (activeTab == 'Active') {
+      return users.where((u) => u.status == 'Active').toList();
+    } else if (activeTab == 'Flagged') {
+      return users.where((u) => u.status == 'Flagged').toList();
+    }
+    return users;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final viewModel = DependencyScope.of(context).userViewModel;
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (context, _) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFF8F9FC),
-          body: Column(
-            children: [
-              const DashboardHeader(title: 'User Management'),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPageHeader(viewModel),
-                      SizedBox(height: 3.h),
-                      _buildTabs(viewModel),
-                      SizedBox(height: 2.h),
-                      if (viewModel.isLoading)
-                        const Center(child: CircularProgressIndicator())
-                      else if (viewModel.error != null)
-                        Center(child: Text('Error: ${viewModel.error}'))
-                      else
-                        _buildUsersTable(viewModel),
-                      SizedBox(height: 5.h),
-                    ],
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FC),
+      body: Column(
+        children: [
+          const DashboardHeader(title: 'User Management'),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPageHeader(),
+                  SizedBox(height: 3.h),
+                  _buildTabs(),
+                  SizedBox(height: 2.h),
+                  if (isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    _buildUsersTable(),
+                  SizedBox(height: 5.h),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
-  Widget _buildPageHeader(UserViewModel viewModel) {
+  Widget _buildPageHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -67,7 +163,7 @@ class UserListPage extends StatelessWidget {
             ),
             SizedBox(height: 0.5.h),
             Text(
-              'Manage and monitor ${viewModel.users.length} registered customers in your database.',
+              'Manage and monitor ${users.length} registered customers in your database.',
               style: GoogleFonts.inter(
                 fontSize: 10.sp,
                 color: Colors.grey[500],
@@ -117,7 +213,7 @@ class UserListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTabs(UserViewModel viewModel) {
+  Widget _buildTabs() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -131,18 +227,18 @@ class UserListPage extends StatelessWidget {
             children: [
               _TabButton(
                 label: 'All Users',
-                isActive: viewModel.activeTab == 'All Users',
-                onTap: () => viewModel.setActiveTab('All Users'),
+                isActive: activeTab == 'All Users',
+                onTap: () => setState(() => activeTab = 'All Users'),
               ),
               _TabButton(
                 label: 'Active',
-                isActive: viewModel.activeTab == 'Active',
-                onTap: () => viewModel.setActiveTab('Active'),
+                isActive: activeTab == 'Active',
+                onTap: () => setState(() => activeTab = 'Active'),
               ),
               _TabButton(
                 label: 'Flagged',
-                isActive: viewModel.activeTab == 'Flagged',
-                onTap: () => viewModel.setActiveTab('Flagged'),
+                isActive: activeTab == 'Flagged',
+                onTap: () => setState(() => activeTab = 'Flagged'),
               ),
             ],
           ),
@@ -151,7 +247,8 @@ class UserListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildUsersTable(UserViewModel viewModel) {
+  Widget _buildUsersTable() {
+    final filtered = filteredUsers;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -186,13 +283,13 @@ class UserListPage extends StatelessWidget {
           Divider(height: 1, color: Colors.grey[100]),
 
           // Rows
-          if (viewModel.filteredUsers.isEmpty)
+          if (filtered.isEmpty)
             Padding(
               padding: EdgeInsets.symmetric(vertical: 5.h),
               child: const Center(child: Text('No users found.')),
             )
           else
-            ...viewModel.filteredUsers.map((user) => _UserRow(user: user)),
+            ...filtered.map((user) => _UserRow(user: user)),
 
           SizedBox(height: 2.h),
 
@@ -203,7 +300,7 @@ class UserListPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Showing 1 to ${viewModel.filteredUsers.length} of ${viewModel.filteredUsers.length} results',
+                  'Showing 1 to ${filtered.length} of ${filtered.length} results',
                   style: GoogleFonts.inter(
                     fontSize: 9.sp,
                     color: Colors.grey[500],

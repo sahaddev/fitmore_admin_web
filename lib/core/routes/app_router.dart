@@ -5,7 +5,7 @@ import 'package:fitmore_web/features/dashboard/presentation/view/main_dashboard.
 import 'package:fitmore_web/features/order/presentation/view/order_list.dart';
 import 'package:fitmore_web/features/products/presentation/view/add_product_page.dart';
 import 'package:fitmore_web/features/products/presentation/view/product_list_page.dart';
-import 'package:fitmore_web/features/user/presentation/view/user_list.dart';
+import 'package:fitmore_web/features/user/presentation/page/user_list.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routers.dart';

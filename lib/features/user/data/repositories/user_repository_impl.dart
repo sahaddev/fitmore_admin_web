@@ -1,16 +1,13 @@
-import '../../domain/entities/user.dart';
-import '../../domain/repositories/i_user_repository.dart';
+import 'package:fitmore_web/features/user/domain/entities/user.dart';
+
+import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_remote_data_source.dart';
-import '../models/user_model.dart';
 
-class UserRepositoryImpl implements IUserRepository {
-  final UserRemoteDataSource remoteDataSource;
-
-  UserRepositoryImpl(this.remoteDataSource);
+class UserRepositoryImpl implements UserRepository {
+  final UserRemoteDataSource remoteDataSource = UserRemoteDataSourceImpl();
 
   @override
-  Future<List<User>> getUsers() async {
-    final usersJson = await remoteDataSource.getUsers();
-    return usersJson.map((json) => UserModel.fromJson(json)).toList().cast<User>();
+  Future<List<UserEntity>> getUsers() async {
+    return remoteDataSource.getUsers();
   }
 }
