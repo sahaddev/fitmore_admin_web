@@ -1,5 +1,6 @@
+import 'package:fitmore_web/core/routes/app_routers.dart';
+import 'package:fitmore_web/core/routes/navigation_service.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
@@ -181,9 +182,8 @@ class _ProductListPageState extends State<ProductListPage> {
                       _FilterButton(
                         label: 'All Products',
                         isActive: _selectedFilter == 'All Products',
-                        onTap: () => setState(
-                          () => _selectedFilter = 'All Products',
-                        ),
+                        onTap: () =>
+                            setState(() => _selectedFilter = 'All Products'),
                       ),
                       SizedBox(width: 1.w),
                       _FilterDropdown(label: 'Electronics'),
@@ -216,18 +216,12 @@ class _ProductListPageState extends State<ProductListPage> {
                           padding: EdgeInsets.all(1.5.w),
                           child: Row(
                             children: [
-                              Expanded(
-                                flex: 3,
-                                child: _TableHeader('PRODUCT'),
-                              ),
+                              Expanded(flex: 3, child: _TableHeader('PRODUCT')),
                               Expanded(
                                 flex: 2,
                                 child: _TableHeader('CATEGORY'),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('PRICE'),
-                              ),
+                              Expanded(flex: 2, child: _TableHeader('PRICE')),
                               Expanded(
                                 flex: 3,
                                 child: _TableHeader('STOCK STATUS'),
@@ -247,113 +241,116 @@ class _ProductListPageState extends State<ProductListPage> {
                         if (isLoading)
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 5.h),
-                            child: const Center(child: CircularProgressIndicator()),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           )
                         else if (products.isEmpty)
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 5.h),
-                            child: const Center(child: Text('No products found.')),
+                            child: const Center(
+                              child: Text('No products found.'),
+                            ),
                           )
                         else
-                          ...products.map((product) => _ProductRow(
-                                name: product.name,
-                                sku: product.sku,
-                                category: product.category,
-                                price: product.price,
-                                stock: product.stock,
-                                status: product.status,
-                                imageColor: product.imageColor,
-                              )),
+                          ...products.map(
+                            (product) => _ProductRow(
+                              name: product.name,
+                              sku: product.sku,
+                              category: product.category,
+                              price: product.price,
+                              stock: product.stock,
+                              status: product.status,
+                              imageColor: product.imageColor,
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                      // Pagination (Mock)
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 2.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Pagination (Mock)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'SHOWING 1 TO 10 OF 2,481 PRODUCTS',
+                          style: GoogleFonts.inter(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[400],
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Row(
                           children: [
+                            _PaginationButton(icon: LucideIcons.chevronLeft),
+                            _PaginationButton(text: '1', isActive: true),
+                            _PaginationButton(text: '2'),
+                            _PaginationButton(text: '3'),
                             Text(
-                              'SHOWING 1 TO 10 OF 2,481 PRODUCTS',
-                              style: GoogleFonts.inter(
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[400],
-                                letterSpacing: 1,
-                              ),
+                              ' ... ',
+                              style: TextStyle(color: Colors.grey[400]),
                             ),
-                            Row(
-                              children: [
-                                _PaginationButton(
-                                  icon: LucideIcons.chevronLeft,
-                                ),
-                                _PaginationButton(text: '1', isActive: true),
-                                _PaginationButton(text: '2'),
-                                _PaginationButton(text: '3'),
-                                Text(
-                                  ' ... ',
-                                  style: TextStyle(color: Colors.grey[400]),
-                                ),
-                                _PaginationButton(text: '248'),
-                                _PaginationButton(
-                                  icon: LucideIcons.chevronRight,
-                                ),
-                              ],
-                            ),
+                            _PaginationButton(text: '248'),
+                            _PaginationButton(icon: LucideIcons.chevronRight),
                           ],
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
 
-                      SizedBox(height: 2.h),
+                  SizedBox(height: 2.h),
 
-                      // Bottom Stats
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _BottomStatCard(
-                              title: 'TOP SELLING',
-                              value: 'Wireless Headphones',
-                              icon: LucideIcons.trendingUp,
-                              iconColor: Colors.green,
-                              isPrimary: false,
-                            ),
-                          ),
-                          SizedBox(width: 2.w),
-                          Expanded(
-                            child: _BottomStatCard(
-                              title: 'LOW STOCK ITEMS',
-                              value: '42 Products',
-                              icon: LucideIcons.alertTriangle,
-                              iconColor: Colors.orange,
-                              isPrimary: false,
-                            ),
-                          ),
-                          SizedBox(width: 2.w),
-                          Expanded(
-                            child: _BottomStatCard(
-                              title: 'TOTAL INVENTORY VALUE',
-                              value: '\$1,248,390.00',
-                              icon: LucideIcons.clipboardList,
-                              iconColor: Colors.white,
-                              isPrimary: true, // Blue card
-                            ),
-                          ),
-                        ],
+                  // Bottom Stats
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'TOP SELLING',
+                          value: 'Wireless Headphones',
+                          icon: LucideIcons.trendingUp,
+                          iconColor: Colors.green,
+                          isPrimary: false,
+                        ),
                       ),
-                      SizedBox(height: 5.h),
+                      SizedBox(width: 2.w),
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'LOW STOCK ITEMS',
+                          value: '42 Products',
+                          icon: LucideIcons.alertTriangle,
+                          iconColor: Colors.orange,
+                          isPrimary: false,
+                        ),
+                      ),
+                      SizedBox(width: 2.w),
+                      Expanded(
+                        child: _BottomStatCard(
+                          title: 'TOTAL INVENTORY VALUE',
+                          value: '\$1,248,390.00',
+                          icon: LucideIcons.clipboardList,
+                          iconColor: Colors.white,
+                          isPrimary: true, // Blue card
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                  SizedBox(height: 5.h),
+                ],
               ),
-            ],
+            ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => context.push('/add-product'),
-            backgroundColor: AppColors.primary,
-            icon: const Icon(Icons.add),
-            label: const Text("Add Product"),
-          ),
-        );
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => NavigationService.pushNamed(AppRouters.addProduct),
+        backgroundColor: AppColors.textSecondary,
+        foregroundColor: AppColors.background,
+        icon: const Icon(Icons.add),
+        label: const Text("Add Product"),
+      ),
+    );
   }
 }
 
@@ -646,7 +643,7 @@ class _ProductRow extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     LucideIcons.edit,
-                    size: 14.sp,
+                    size: 12.sp,
                     color: const Color(0xFF258fb0),
                   ),
                   onPressed: () {},
@@ -654,7 +651,7 @@ class _ProductRow extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     LucideIcons.trash2,
-                    size: 14.sp,
+                    size: 12.sp,
                     color: Colors.grey[400],
                   ),
                   onPressed: () {},

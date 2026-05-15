@@ -17,16 +17,17 @@ class _AddProductPageState extends State<AddProductPage> {
 
   // Controllers
   final _nameController = TextEditingController();
+  final _subTitleController = TextEditingController();
   final _descController = TextEditingController();
   final _priceController = TextEditingController();
   final _salePriceController = TextEditingController();
+  final _countController = TextEditingController();
   final _skuController = TextEditingController();
   final _tagsController = TextEditingController();
 
   // State
   String _selectedCategory = 'Lighting & Decor';
   String _selectedCollection = 'Winter 2024';
-  int _stockCount = 1;
   bool _trackStock = true;
   bool _isPublished = true;
   final List<String> _tags = ['modern', 'oak'];
@@ -34,9 +35,11 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _subTitleController.dispose();
     _descController.dispose();
     _priceController.dispose();
     _salePriceController.dispose();
+    _countController.dispose();
     _skuController.dispose();
     _tagsController.dispose();
     super.dispose();
@@ -197,6 +200,12 @@ class _AddProductPageState extends State<AddProductPage> {
             hint: 'e.g. Minimalist Oak Desk Lamp',
           ),
           SizedBox(height: 2.h),
+          _Label('Sub Title'),
+          _TextInput(
+            controller: _subTitleController,
+            hint: 'e.g. Short product description',
+          ),
+          SizedBox(height: 2.h),
           Row(
             children: [
               Expanded(
@@ -309,6 +318,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       controller: _priceController,
                       prefix: '\$',
                       hint: '0.00',
+                      keyboardType: TextInputType.number,
                     ),
                   ],
                 ),
@@ -319,7 +329,11 @@ class _AddProductPageState extends State<AddProductPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _Label('Sale Price (Optional)'),
-                    _TextInput(controller: _salePriceController, prefix: '\$'),
+                    _TextInput(
+                      controller: _salePriceController,
+                      prefix: '\$',
+                      keyboardType: TextInputType.number,
+                    ),
                   ],
                 ),
               ),
@@ -332,10 +346,11 @@ class _AddProductPageState extends State<AddProductPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Label('SKU'),
+                    _Label('Product Count'),
                     _TextInput(
-                      controller: _skuController,
-                      hint: 'LD-2024-OAK-SM',
+                      controller: _countController,
+                      hint: '0',
+                      keyboardType: TextInputType.number,
                     ),
                   ],
                 ),
@@ -345,46 +360,10 @@ class _AddProductPageState extends State<AddProductPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Label('Available Stock'),
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => setState(
-                              () => _stockCount > 0 ? _stockCount-- : null,
-                            ),
-                            icon: Icon(
-                              LucideIcons.minus,
-                              size: 14.sp,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                '$_stockCount',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () => setState(() => _stockCount++),
-                            icon: Icon(
-                              LucideIcons.plus,
-                              size: 14.sp,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
+                    _Label('SKU'),
+                    _TextInput(
+                      controller: _skuController,
+                      hint: 'LD-2024-OAK-SM',
                     ),
                   ],
                 ),
@@ -523,6 +502,8 @@ class _AddProductPageState extends State<AddProductPage> {
           SizedBox(height: 1.h),
           Row(
             children: [
+              Expanded(child: _MediaPlaceholder()),
+              SizedBox(width: 1.w),
               Expanded(child: _MediaPlaceholder()),
               SizedBox(width: 1.w),
               Expanded(child: _MediaPlaceholder()),
@@ -878,8 +859,14 @@ class _TextInput extends StatelessWidget {
   final TextEditingController controller;
   final String? hint;
   final String? prefix;
+  final TextInputType? keyboardType;
 
-  const _TextInput({required this.controller, this.hint, this.prefix});
+  const _TextInput({
+    required this.controller,
+    this.hint,
+    this.prefix,
+    this.keyboardType,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -892,6 +879,7 @@ class _TextInput extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: TextField(
         controller: controller,
+        keyboardType: keyboardType,
         style: TextStyle(fontSize: 10.sp),
         decoration: InputDecoration(
           hintText: hint,
