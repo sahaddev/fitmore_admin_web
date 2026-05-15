@@ -1,96 +1,80 @@
 import 'package:fitmore_web/features/dashboard/presentation/widgets/dashboard_header.dart';
+import 'package:fitmore_web/features/user/domain/entities/user.dart';
+import 'package:fitmore_web/features/user/presentation/page/user_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
-class User {
-  final String id;
-  final String name;
-  final String email;
-  final String phone;
-  final String avatarUrl;
-  final int orders;
-  final int? recentOrders;
-  final DateTime joinDate;
-  final String status;
+// Local User model removed in favor of UserEntity
 
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.avatarUrl,
-    required this.orders,
-    this.recentOrders,
-    required this.joinDate,
-    required this.status,
-  });
-}
-
-final List<User> demoUsers = [
-  User(
-    id: 'USR-001',
-    name: 'Sarah Johnson',
+final List<UserEntity> demoUsers = [
+  UserEntity(
+    id: 1,
+    username: 'Sarah Johnson',
     email: 'sarah.j@example.com',
-    phone: '+1 (555) 123-4567',
-    avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
-    orders: 12,
-    recentOrders: 2,
-    joinDate: DateTime.now().subtract(const Duration(days: 45)),
-    status: 'Active',
+    phoneNumber: '+1 (555) 123-4567',
+    profileImage: 'https://i.pravatar.cc/150?u=sarah',
+    ordersCount: 12,
+    createdAt: DateTime.now().subtract(const Duration(days: 45)),
+    active: true,
+    password: 'password123',
   ),
-  User(
-    id: 'USR-002',
-    name: 'Michael Chen',
+  UserEntity(
+    id: 2,
+    username: 'Michael Chen',
     email: 'm.chen@example.com',
-    phone: '+1 (555) 987-6543',
-    avatarUrl: 'https://i.pravatar.cc/150?u=michael',
-    orders: 5,
-    joinDate: DateTime.now().subtract(const Duration(days: 120)),
-    status: 'Active',
+    phoneNumber: '+1 (555) 987-6543',
+    profileImage: 'https://i.pravatar.cc/150?u=michael',
+    ordersCount: 5,
+    createdAt: DateTime.now().subtract(const Duration(days: 120)),
+    active: true,
+    password: 'password123',
   ),
-  User(
-    id: 'USR-003',
-    name: 'Emma Wilson',
+  UserEntity(
+    id: 3,
+    username: 'Emma Wilson',
     email: 'emma.w@example.com',
-    phone: '+1 (555) 456-7890',
-    avatarUrl: 'https://i.pravatar.cc/150?u=emma',
-    orders: 0,
-    joinDate: DateTime.now().subtract(const Duration(days: 5)),
-    status: 'Active',
+    phoneNumber: '+1 (555) 456-7890',
+    profileImage: 'https://i.pravatar.cc/150?u=emma',
+    ordersCount: 0,
+    createdAt: DateTime.now().subtract(const Duration(days: 5)),
+    active: true,
+    password: 'password123',
   ),
-  User(
-    id: 'USR-004',
-    name: 'David Rodriguez',
+  UserEntity(
+    id: 4,
+    username: 'David Rodriguez',
     email: 'david.r@example.com',
-    phone: '+1 (555) 234-5678',
-    avatarUrl: 'https://i.pravatar.cc/150?u=david',
-    orders: 24,
-    recentOrders: 5,
-    joinDate: DateTime.now().subtract(const Duration(days: 300)),
-    status: 'Flagged',
+    phoneNumber: '+1 (555) 234-5678',
+    profileImage: 'https://i.pravatar.cc/150?u=david',
+    ordersCount: 24,
+    createdAt: DateTime.now().subtract(const Duration(days: 300)),
+    active: false,
+    password: 'password123',
   ),
-  User(
-    id: 'USR-005',
-    name: 'Lisa Brown',
+  UserEntity(
+    id: 5,
+    username: 'Lisa Brown',
     email: 'lisa.b@example.com',
-    phone: '+1 (555) 876-5432',
-    avatarUrl: 'https://i.pravatar.cc/150?u=lisa',
-    orders: 8,
-    joinDate: DateTime.now().subtract(const Duration(days: 15)),
-    status: 'Active',
+    phoneNumber: '+1 (555) 876-5432',
+    profileImage: 'https://i.pravatar.cc/150?u=lisa',
+    ordersCount: 8,
+    createdAt: DateTime.now().subtract(const Duration(days: 15)),
+    active: true,
+    password: 'password123',
   ),
-  User(
-    id: 'USR-006',
-    name: 'James Smith',
+  UserEntity(
+    id: 6,
+    username: 'James Smith',
     email: 'j.smith@example.com',
-    phone: '+1 (555) 345-6789',
-    avatarUrl: 'https://i.pravatar.cc/150?u=james',
-    orders: 2,
-    joinDate: DateTime.now().subtract(const Duration(days: 60)),
-    status: 'Active',
+    phoneNumber: '+1 (555) 345-6789',
+    profileImage: 'https://i.pravatar.cc/150?u=james',
+    ordersCount: 2,
+    createdAt: DateTime.now().subtract(const Duration(days: 60)),
+    active: true,
+    password: 'password123',
   ),
 ];
 
@@ -104,15 +88,22 @@ class UserListPage extends StatefulWidget {
 class _UserListPageState extends State<UserListPage> {
   String activeTab = 'All Users';
   bool isLoading = false;
-  List<User> users = demoUsers;
+  List<UserEntity> users = demoUsers;
 
-  List<User> get filteredUsers {
+  List<UserEntity> get filteredUsers {
     if (activeTab == 'Active') {
-      return users.where((u) => u.status == 'Active').toList();
+      return users.where((u) => u.active).toList();
     } else if (activeTab == 'Flagged') {
-      return users.where((u) => u.status == 'Flagged').toList();
+      return users.where((u) => !u.active).toList();
     }
     return users;
+  }
+
+  void _showUserDialog([UserEntity? user]) {
+    showDialog(
+      context: context,
+      builder: (context) => UserDialog(user: user),
+    );
   }
 
   @override
@@ -192,7 +183,7 @@ class _UserListPageState extends State<UserListPage> {
             ),
             SizedBox(width: 1.w),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () => _showUserDialog(),
               icon: Icon(LucideIcons.userPlus, size: 14.sp),
               label: const Text('Add Customer'),
               style: ElevatedButton.styleFrom(
@@ -289,7 +280,10 @@ class _UserListPageState extends State<UserListPage> {
               child: const Center(child: Text('No users found.')),
             )
           else
-            ...filtered.map((user) => _UserRow(user: user)),
+            ...filtered.map(
+              (user) =>
+                  _UserRow(user: user, onEdit: () => _showUserDialog(user)),
+            ),
 
           SizedBox(height: 2.h),
 
@@ -393,24 +387,26 @@ class _TableHeader extends StatelessWidget {
 }
 
 class _UserRow extends StatelessWidget {
-  final User user;
+  final UserEntity user;
+  final VoidCallback onEdit;
 
-  const _UserRow({required this.user});
+  const _UserRow({required this.user, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
-    Color statusBg = user.status == 'Active'
+    Color statusBg = user.active
         ? const Color(0xFFE6F7ED)
         : const Color(0xFFF3F4F6);
-    Color statusText = user.status == 'Active'
+    Color statusText = user.active
         ? const Color(0xFF2E7D32)
         : const Color(0xFF6B7280);
-    Color statusDot = user.status == 'Active'
+    Color statusDot = user.active
         ? const Color(0xFF2E7D32)
         : const Color(0xFF9CA3AF);
 
-    final joinDateStr = DateFormat('MMM dd, yyyy').format(user.joinDate);
-    final joinTimeStr = DateFormat('hh:mm a').format(user.joinDate);
+    final joinDate = user.createdAt ?? DateTime.now();
+    final joinDateStr = DateFormat('MMM dd, yyyy').format(joinDate);
+    final joinTimeStr = DateFormat('hh:mm a').format(joinDate);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.2.h),
@@ -426,14 +422,19 @@ class _UserRow extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundImage: NetworkImage(user.avatarUrl),
+                  backgroundImage: user.profileImage != null
+                      ? NetworkImage(user.profileImage!)
+                      : null,
+                  child: user.profileImage == null
+                      ? const Icon(LucideIcons.user, size: 18)
+                      : null,
                 ),
                 SizedBox(width: 1.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.name,
+                      user.username,
                       style: GoogleFonts.inter(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
@@ -466,7 +467,7 @@ class _UserRow extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  user.phone,
+                  user.phoneNumber ?? '--',
                   style: GoogleFonts.inter(
                     fontSize: 9.sp,
                     color: Colors.grey[500],
@@ -481,33 +482,12 @@ class _UserRow extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  '${user.orders}',
+                  '${user.ordersCount}',
                   style: GoogleFonts.inter(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (user.recentOrders != null && user.recentOrders! > 0) ...[
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE6F7ED),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '+${user.recentOrders}',
-                      style: GoogleFonts.inter(
-                        fontSize: 8.sp,
-                        color: const Color(0xFF2E7D32),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
@@ -560,7 +540,7 @@ class _UserRow extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        user.status,
+                        user.active ? 'Active' : 'Flagged',
                         style: GoogleFonts.inter(
                           fontSize: 8.sp,
                           fontWeight: FontWeight.w600,
@@ -580,11 +560,11 @@ class _UserRow extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: IconButton(
                 icon: Icon(
-                  LucideIcons.moreHorizontal,
-                  size: 14.sp,
-                  color: Colors.grey[400],
+                  LucideIcons.edit,
+                  size: 12.sp,
+                  color: const Color(0xFF258fb0),
                 ),
-                onPressed: () {},
+                onPressed: onEdit,
               ),
             ),
           ),
