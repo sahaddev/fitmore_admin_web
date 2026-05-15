@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:fitmore_web/features/coupons/domain/entities/coupon.dart';
+import 'package:fitmore_web/features/coupons/presentation/pages/update_coupon_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
@@ -17,6 +19,21 @@ class _CouponListPageState extends State<CouponListPage> {
   String _discountType = 'Percentage';
   final _codeController = TextEditingController(text: 'WINTER2024');
   final _valueController = TextEditingController(text: '15');
+
+  void _showUpdateDialog(String title, String code, {int? percentage, int? fixedAmount}) {
+    showDialog(
+      context: context,
+      builder: (context) => UpdateCouponDialog(
+        coupon: CouponEntity(
+          title: title,
+          code: code,
+          percentage: percentage,
+          fixedAmount: fixedAmount,
+          expiry: DateTime.now().add(const Duration(days: 30)),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -387,6 +404,8 @@ class _CouponListPageState extends State<CouponListPage> {
                             progressLabel: '742 / 1000',
                             dateLabel: 'Ends Sep 15, 2024',
                             dateIcon: LucideIcons.calendarDays,
+                            onEdit: () => _showUpdateDialog('25% Discount', 'SUMMER25', percentage: 25),
+                            onDelete: () {},
                           ),
                           _CampaignCard(
                             width: (constraints.maxWidth - 3.w) / 3,
@@ -410,6 +429,8 @@ class _CouponListPageState extends State<CouponListPage> {
                             dateLabel: 'Starts Oct 01, 2024',
                             dateIcon: LucideIcons.calendarClock,
                             isScheduled: true,
+                            onEdit: () => _showUpdateDialog('\$50.00 Off', 'VIPACCESS', fixedAmount: 50),
+                            onDelete: () {},
                           ),
                           _CampaignCard(
                             width: (constraints.maxWidth - 3.w) / 3,
@@ -422,6 +443,8 @@ class _CouponListPageState extends State<CouponListPage> {
                             dateLabel: 'Expires in 4 hours',
                             dateIcon: LucideIcons.timer,
                             isEndingSoon: true,
+                            onEdit: () => _showUpdateDialog('50% Clearance', 'FLASH50', percentage: 50),
+                            onDelete: () {},
                           ),
                           _CampaignCard(
                             width: (constraints.maxWidth - 3.w) / 3,
@@ -434,6 +457,8 @@ class _CouponListPageState extends State<CouponListPage> {
                             progressLabelLeft: 'Weekly Usage',
                             dateLabel: 'Never Expires',
                             dateIcon: LucideIcons.calendarCheck,
+                            onEdit: () => _showUpdateDialog('Free Shipping', 'FREESHIP', fixedAmount: 0),
+                            onDelete: () {},
                           ),
                           // Add Card
                           Container(
@@ -601,6 +626,8 @@ class _CampaignCard extends StatelessWidget {
   final bool isExpired;
   final bool isScheduled;
   final bool isEndingSoon;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const _CampaignCard({
     required this.width,
@@ -617,6 +644,8 @@ class _CampaignCard extends StatelessWidget {
     this.isExpired = false,
     this.isScheduled = false,
     this.isEndingSoon = false,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -816,9 +845,19 @@ class _CampaignCard extends StatelessWidget {
               if (isExpired)
                 Icon(LucideIcons.rotateCcw, size: 16, color: Colors.grey[400])
               else ...[
-                Icon(LucideIcons.pencil, size: 16, color: Colors.grey[400]),
+                IconButton(
+                  onPressed: onEdit,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: Icon(LucideIcons.pencil, size: 16, color: Colors.grey[400]),
+                ),
                 SizedBox(width: 12),
-                Icon(LucideIcons.trash2, size: 16, color: Colors.grey[400]),
+                IconButton(
+                  onPressed: onDelete,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: Icon(LucideIcons.trash2, size: 16, color: Colors.grey[400]),
+                ),
               ],
             ],
           ),

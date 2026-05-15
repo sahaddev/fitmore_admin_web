@@ -4,7 +4,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/product.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
 import '../../../../core/routes/app_routers.dart';
 import '../../../../core/routes/navigation_service.dart';
