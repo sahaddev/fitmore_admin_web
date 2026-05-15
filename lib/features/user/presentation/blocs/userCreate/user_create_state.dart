@@ -1,7 +1,7 @@
 part of 'user_create_bloc.dart';
 
 @freezed
-class UserCreateState with _$UserCreateState {
+sealed class UserCreateState with _$UserCreateState {
   const factory UserCreateState.initial() = UserCreateStateInitial;
   const factory UserCreateState.loading() = UserCreateStateLoading;
   const factory UserCreateState.loaded({UserEntity? user}) =

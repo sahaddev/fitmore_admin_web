@@ -275,10 +275,7 @@ return initial(_that);case UserListStateLoading():
 return loading(_that);case UserListStateLoaded():
 return loaded(_that);case UserListStateFailure():
 return failure(_that);case UserListStateSuccess():
-return success(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return success(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -349,10 +346,7 @@ return initial();case UserListStateLoading():
 return loading();case UserListStateLoaded():
 return loaded(_that.users);case UserListStateFailure():
 return failure(_that.message);case UserListStateSuccess():
-return success();case _:
-  throw StateError('Unexpected subclass');
-
-}
+return success();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

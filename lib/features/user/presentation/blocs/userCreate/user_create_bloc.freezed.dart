@@ -85,10 +85,7 @@ switch (_that) {
 case _PickProductImage():
 return pickProductImage(_that);case _UpdateUser():
 return updateUser(_that);case _CreateUser():
-return createUser(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return createUser(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -153,10 +150,7 @@ switch (_that) {
 case _PickProductImage():
 return pickProductImage();case _UpdateUser():
 return updateUser(_that.user);case _CreateUser():
-return createUser(_that.user);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return createUser(_that.user);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -425,10 +419,7 @@ return initial(_that);case UserCreateStateLoading():
 return loading(_that);case UserCreateStateLoaded():
 return loaded(_that);case UserCreateStateError():
 return error(_that);case UserCreateStateSuccess():
-return success(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return success(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -499,10 +490,7 @@ return initial();case UserCreateStateLoading():
 return loading();case UserCreateStateLoaded():
 return loaded(_that.user);case UserCreateStateError():
 return error(_that.message);case UserCreateStateSuccess():
-return success();case _:
-  throw StateError('Unexpected subclass');
-
-}
+return success();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
