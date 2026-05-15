@@ -5,6 +5,8 @@ import 'package:fitmore_web/features/dashboard/presentation/view/main_dashboard.
 import 'package:fitmore_web/features/order/presentation/view/order_list.dart';
 import 'package:fitmore_web/features/products/presentation/pages/add_product_page.dart';
 import 'package:fitmore_web/features/products/presentation/pages/product_list_page.dart';
+import 'package:fitmore_web/features/products/presentation/pages/update_product_page.dart';
+import 'package:fitmore_web/features/products/domain/entities/product.dart';
 import 'package:fitmore_web/features/user/presentation/page/user_list.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +42,12 @@ class AppRouter {
       case AppRouters.addProduct:
         return NoTransitionPageRoute(
           builder: (_) => const AddProductPage(),
+          settings: settings,
+        );
+      case AppRouters.updateProduct:
+        final product = settings.arguments as ProductEntity;
+        return NoTransitionPageRoute(
+          builder: (_) => UpdateProductPage(product: product),
           settings: settings,
         );
       case AppRouters.dashboard:

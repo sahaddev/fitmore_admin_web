@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import '../../domain/entities/product.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
@@ -255,6 +256,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         else
                           ...products.map(
                             (product) => _ProductRow(
+                              id: product.id,
                               name: product.name,
                               sku: product.sku,
                               category: product.category,
@@ -479,6 +481,7 @@ class _TableHeader extends StatelessWidget {
 }
 
 class _ProductRow extends StatelessWidget {
+  final String id;
   final String name;
   final String sku;
   final String category;
@@ -488,6 +491,7 @@ class _ProductRow extends StatelessWidget {
   final Color imageColor;
 
   const _ProductRow({
+    required this.id,
     required this.name,
     required this.sku,
     required this.category,
@@ -646,7 +650,26 @@ class _ProductRow extends StatelessWidget {
                     size: 12.sp,
                     color: const Color(0xFF258fb0),
                   ),
-                  onPressed: () {},
+                onPressed: () {
+                  final dummyEntity = ProductEntity(
+                    id: int.tryParse(id) ?? 0,
+                    title: name,
+                    subTitle: 'Premium $category item',
+                    description: 'This is a high-quality $name from our $category collection.',
+                    imageOne: '',
+                    imageTwo: '',
+                    imageThree: '',
+                    imageFour: '',
+                    price: price.toInt(),
+                    category: category,
+                    quantity: stock,
+                    active: status == 'In Stock',
+                  );
+                  NavigationService.pushNamed(
+                    AppRouters.updateProduct,
+                    arguments: dummyEntity,
+                  );
+                },
                 ),
                 IconButton(
                   icon: Icon(
