@@ -3,6 +3,7 @@ class AppRouters {
   static const products = "products";
   static const addProduct = "add-product";
   static const updateProduct = "update-product";
+  static const productDetails = "product-details";
   static const dashboard = "dashboard";
   static const orders = "orders";
   static const customers = "customers";

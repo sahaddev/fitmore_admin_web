@@ -510,179 +510,201 @@ class _ProductRow extends StatelessWidget {
         ? 0.8
         : (status == 'Low Stock' ? 0.2 : 0.05);
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.5.h),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
-      ),
-      child: Row(
-        children: [
-          // Product Info
-          Expanded(
-            flex: 3,
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: imageColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    image: null, // Placeholder
+    return InkWell(
+      onTap: () {
+        final dummyEntity = ProductEntity(
+          id: int.tryParse(id) ?? 0,
+          title: name,
+          subTitle: 'Premium $category item',
+          description: 'This is a high-quality $name from our $category collection.',
+          imageOne: '',
+          imageTwo: '',
+          imageThree: '',
+          imageFour: '',
+          price: price.toInt(),
+          category: category,
+          quantity: stock,
+          active: status == 'In Stock',
+        );
+        NavigationService.pushNamed(
+          AppRouters.productDetails,
+          arguments: dummyEntity,
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.5.h),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
+        ),
+        child: Row(
+          children: [
+            // Product Info
+            Expanded(
+              flex: 3,
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: imageColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      image: null, // Placeholder
+                    ),
+                    child: Center(
+                      child: Icon(LucideIcons.image, size: 20, color: imageColor),
+                    ),
                   ),
-                  child: Center(
-                    child: Icon(LucideIcons.image, size: 20, color: imageColor),
+                  SizedBox(width: 1.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.sp,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          'SKU: $sku',
+                          style: GoogleFonts.inter(
+                            fontSize: 9.sp,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            ),
+            // Category
+            Expanded(
+              flex: 2,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      category,
+                      style: GoogleFonts.inter(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Price
+            Expanded(
+              flex: 2,
+              child: Text(
+                '\$${price.toStringAsFixed(2)}',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10.sp,
+                  color: Colors.black87,
                 ),
-                SizedBox(width: 1.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            ),
+            // Stock Status
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        name,
+                        status,
                         style: GoogleFonts.inter(
+                          fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
-                          fontSize: 10.sp,
-                          color: Colors.black87,
+                          color: statusColor,
                         ),
                       ),
                       Text(
-                        'SKU: $sku',
+                        '$stock',
                         style: GoogleFonts.inter(
                           fontSize: 9.sp,
-                          color: Colors.grey[500],
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Category
-          Expanded(
-            flex: 2,
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    category,
-                    style: GoogleFonts.inter(
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue[700],
+                  SizedBox(height: 6),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: LinearProgressIndicator(
+                      value: stockPercent,
+                      minHeight: 4,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(statusColor),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Price
-          Expanded(
-            flex: 2,
-            child: Text(
-              '\$${price.toStringAsFixed(2)}',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: 10.sp,
-                color: Colors.black87,
+                ],
               ),
             ),
-          ),
-          // Stock Status
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      status,
-                      style: GoogleFonts.inter(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                        color: statusColor,
-                      ),
+            // Actions
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      LucideIcons.edit,
+                      size: 12.sp,
+                      color: const Color(0xFF258fb0),
                     ),
-                    Text(
-                      '$stock',
-                      style: GoogleFonts.inter(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
-                      ),
+                    onPressed: () {
+                      final dummyEntity = ProductEntity(
+                        id: int.tryParse(id) ?? 0,
+                        title: name,
+                        subTitle: 'Premium $category item',
+                        description: 'This is a high-quality $name from our $category collection.',
+                        imageOne: '',
+                        imageTwo: '',
+                        imageThree: '',
+                        imageFour: '',
+                        price: price.toInt(),
+                        category: category,
+                        quantity: stock,
+                        active: status == 'In Stock',
+                      );
+                      NavigationService.pushNamed(
+                        AppRouters.updateProduct,
+                        arguments: dummyEntity,
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      LucideIcons.trash2,
+                      size: 12.sp,
+                      color: Colors.grey[400],
                     ),
-                  ],
-                ),
-                SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: stockPercent,
-                    minHeight: 4,
-                    backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+                    onPressed: () {},
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // Actions
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    LucideIcons.edit,
-                    size: 12.sp,
-                    color: const Color(0xFF258fb0),
-                  ),
-                onPressed: () {
-                  final dummyEntity = ProductEntity(
-                    id: int.tryParse(id) ?? 0,
-                    title: name,
-                    subTitle: 'Premium $category item',
-                    description: 'This is a high-quality $name from our $category collection.',
-                    imageOne: '',
-                    imageTwo: '',
-                    imageThree: '',
-                    imageFour: '',
-                    price: price.toInt(),
-                    category: category,
-                    quantity: stock,
-                    active: status == 'In Stock',
-                  );
-                  NavigationService.pushNamed(
-                    AppRouters.updateProduct,
-                    arguments: dummyEntity,
-                  );
-                },
-                ),
-                IconButton(
-                  icon: Icon(
-                    LucideIcons.trash2,
-                    size: 12.sp,
-                    color: Colors.grey[400],
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
