@@ -191,7 +191,7 @@ class _UserDialogState extends State<UserDialog> {
                     Switch(
                       value: _isActive,
                       onChanged: (v) => setState(() => _isActive = v),
-                      activeColor: const Color(0xFF258fb0),
+                      activeThumbColor: const Color(0xFF258fb0),
                     ),
                   ],
                 ),

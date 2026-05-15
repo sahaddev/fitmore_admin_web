@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,11 +39,18 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     _nameController = TextEditingController(text: widget.product.title);
     _subTitleController = TextEditingController(text: widget.product.subTitle);
     _descController = TextEditingController(text: widget.product.description);
-    _priceController = TextEditingController(text: widget.product.price.toString());
-    _salePriceController = TextEditingController(); // Assuming sale price might not be in entity or handled separately
-    _countController = TextEditingController(text: widget.product.quantity.toString());
-    _skuController = TextEditingController(text: 'LD-2024-OAK-SM'); // Placeholder
-    
+    _priceController = TextEditingController(
+      text: widget.product.price.toString(),
+    );
+    _salePriceController =
+        TextEditingController(); // Assuming sale price might not be in entity or handled separately
+    _countController = TextEditingController(
+      text: widget.product.quantity.toString(),
+    );
+    _skuController = TextEditingController(
+      text: 'LD-2024-OAK-SM',
+    ); // Placeholder
+
     _selectedCategory = widget.product.category;
     _selectedCollection = 'Winter 2024'; // Placeholder
     _trackStock = true;

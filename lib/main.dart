@@ -1,3 +1,4 @@
+import 'package:fitmore_web/core/di/bloc_provider.dart';
 import 'package:fitmore_web/core/di/service_locator.dart';
 import 'package:fitmore_web/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
@@ -21,28 +22,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return PlatformApp(
-          title: 'FitMore Web',
-          debugShowCheckedModeBanner: false,
-          navigatorKey: NavigationService.navigatorKey,
-          onGenerateRoute: AppRouter.generateRoute,
-          initialRoute: AppRouters.login,
-          localizationsDelegates: const [
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-          ],
-          builder: (context, child) => MainLayout(child: child!),
-          material: (context, platform) => MaterialAppData(
-            theme: ThemeData(
-              primaryColor: AppColors.primary,
-              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-              useMaterial3: true,
+    return AppBlocProvider(
+      child: Sizer(
+        builder: (context, orientation, deviceType) {
+          return PlatformApp(
+            title: 'FitMore Web',
+            debugShowCheckedModeBanner: false,
+            navigatorKey: NavigationService.navigatorKey,
+            onGenerateRoute: AppRouter.generateRoute,
+            initialRoute: AppRouters.login,
+            localizationsDelegates: const [
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+            ],
+            builder: (context, child) => MainLayout(child: child!),
+            material: (context, platform) => MaterialAppData(
+              theme: ThemeData(
+                primaryColor: AppColors.primary,
+                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+                useMaterial3: true,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
