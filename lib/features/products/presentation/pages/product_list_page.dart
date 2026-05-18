@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/product.dart';
+import '../blocs/productList/product_list_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
@@ -103,12 +106,11 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   String _selectedFilter = 'All Products';
-  List<Product> products = demoProducts;
-  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    context.read<ProductListBloc>().add(const ProductListEvent.fetchProducts());
   }
 
   @override
@@ -122,231 +124,276 @@ class _ProductListPageState extends State<ProductListPage> {
 
           // Scrollable Page Content
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Page Header (Title + Export)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
+            child: BlocBuilder<ProductListBloc, ProductListState>(
+              builder: (context, state) {
+                return state.when(
+                  initial: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  failure: (message) => Center(
+                    child: Text(
+                      'Failed to load products: $message',
+                      style: GoogleFonts.inter(color: Colors.red),
+                    ),
+                  ),
+                  loaded: (products) {
+                    // Compute metrics dynamically from the live list of products
+                    final totalValue = products.fold<double>(
+                      0.0,
+                      (prev, p) => prev + (p.price * p.quantity),
+                    );
+                    final lowStockCount =
+                        products.where((p) => p.quantity <= 10).length;
+                    final topSelling =
+                        products.isNotEmpty ? products.first.title : 'N/A';
+
+                    return SingleChildScrollView(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Product Inventory',
-                            style: GoogleFonts.inter(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          SizedBox(height: 0.5.h),
-                          Text(
-                            'Monitoring ${products.length} items across 12 categories',
-                            style: GoogleFonts.inter(
-                              fontSize: 10.sp,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          OutlinedButton.icon(
-                            onPressed: () {},
-                            icon: Icon(LucideIcons.download, size: 14.sp),
-                            label: const Text('Export CSV'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.grey[700],
-                              side: BorderSide(color: Colors.grey[300]!),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 2.w,
-                                vertical: 1.5.h,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 3.h),
-
-                  // Filters & Search Bar
-                  Row(
-                    children: [
-                      _FilterButton(
-                        label: 'All Products',
-                        isActive: _selectedFilter == 'All Products',
-                        onTap: () =>
-                            setState(() => _selectedFilter = 'All Products'),
-                      ),
-                      SizedBox(width: 1.w),
-                      _FilterDropdown(label: 'Electronics'),
-                      SizedBox(width: 1.w),
-                      _FilterDropdown(label: 'Furniture'),
-                      SizedBox(width: 1.w),
-                      _FilterChip(label: 'Low Stock', color: Colors.orange),
-                    ],
-                  ),
-
-                  SizedBox(height: 3.h),
-
-                  // Products Table
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Table Header
-                        Padding(
-                          padding: EdgeInsets.all(1.5.w),
-                          child: Row(
+                          // Page Header (Title + Export)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(flex: 3, child: _TableHeader('PRODUCT')),
-                              Expanded(
-                                flex: 2,
-                                child: _TableHeader('CATEGORY'),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Product Inventory',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 0.5.h),
+                                  Text(
+                                    'Monitoring ${products.length} items across 12 categories',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 10.sp,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Expanded(flex: 2, child: _TableHeader('PRICE')),
-                              Expanded(
-                                flex: 3,
-                                child: _TableHeader('STOCK STATUS'),
+                              Row(
+                                children: [
+                                  OutlinedButton.icon(
+                                    onPressed: () {},
+                                    icon: Icon(LucideIcons.download, size: 14.sp),
+                                    label: const Text('Export CSV'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: Colors.grey[700],
+                                      side: BorderSide(color: Colors.grey[300]!),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 2.w,
+                                        vertical: 1.5.h,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ],
+                          ),
+
+                          SizedBox(height: 3.h),
+
+                          // Filters & Search Bar
+                          Row(
+                            children: [
+                              _FilterButton(
+                                label: 'All Products',
+                                isActive: _selectedFilter == 'All Products',
+                                onTap: () => setState(
+                                  () => _selectedFilter = 'All Products',
+                                ),
+                              ),
+                              SizedBox(width: 1.w),
+                              _FilterDropdown(label: 'Electronics'),
+                              SizedBox(width: 1.w),
+                              _FilterDropdown(label: 'Furniture'),
+                              SizedBox(width: 1.w),
+                              _FilterChip(
+                                label: 'Low Stock',
+                                color: Colors.orange,
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 3.h),
+
+                          // Products Table
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.02),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // Table Header
+                                Padding(
+                                  padding: EdgeInsets.all(1.5.w),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: _TableHeader('PRODUCT'),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: _TableHeader('CATEGORY'),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: _TableHeader('PRICE'),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: _TableHeader('STOCK STATUS'),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: _TableHeader(
+                                          'ACTIONS',
+                                          align: TextAlign.end,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(height: 1, color: Colors.grey[100]),
+                                // Table Rows (Dynamic from server)
+                                if (products.isEmpty)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                                    child: const Center(
+                                      child: Text('No products found.'),
+                                    ),
+                                  )
+                                else
+                                  ...products.map(
+                                    (product) => _ProductRow(
+                                      id: product.id?.toString() ?? '',
+                                      name: product.title,
+                                      sku: 'PRO-${product.id ?? 'N/A'}',
+                                      category: product.category,
+                                      price: product.price.toDouble(),
+                                      stock: product.quantity,
+                                      status: product.active
+                                          ? (product.quantity > 10
+                                              ? 'In Stock'
+                                              : 'Low Stock')
+                                          : 'Out of Stock',
+                                      imageColor: Colors.blueGrey,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          // Pagination (Mock)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'SHOWING ${products.length} OF ${products.length} PRODUCTS',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[400],
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    _PaginationButton(
+                                      icon: LucideIcons.chevronLeft,
+                                    ),
+                                    _PaginationButton(
+                                      text: '1',
+                                      isActive: true,
+                                    ),
+                                    _PaginationButton(
+                                      icon: LucideIcons.chevronRight,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 2.h),
+
+                          // Bottom Stats
+                          Row(
+                            children: [
                               Expanded(
-                                flex: 1,
-                                child: _TableHeader(
-                                  'ACTIONS',
-                                  align: TextAlign.end,
+                                child: _BottomStatCard(
+                                  title: 'TOP SELLING',
+                                  value: topSelling,
+                                  icon: LucideIcons.trendingUp,
+                                  iconColor: Colors.green,
+                                  isPrimary: false,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                child: _BottomStatCard(
+                                  title: 'LOW STOCK ITEMS',
+                                  value: '$lowStockCount Products',
+                                  icon: LucideIcons.alertTriangle,
+                                  iconColor: Colors.orange,
+                                  isPrimary: false,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                child: _BottomStatCard(
+                                  title: 'TOTAL INVENTORY VALUE',
+                                  value:
+                                      '\$${NumberFormat('#,##0.00').format(totalValue)}',
+                                  icon: LucideIcons.clipboardList,
+                                  iconColor: Colors.white,
+                                  isPrimary: true, // Blue card
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Divider(height: 1, color: Colors.grey[100]),
-                        // Table Rows (Dynamic from demoProducts)
-                        if (isLoading)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.h),
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        else if (products.isEmpty)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.h),
-                            child: const Center(
-                              child: Text('No products found.'),
-                            ),
-                          )
-                        else
-                          ...products.map(
-                            (product) => _ProductRow(
-                              id: product.id,
-                              name: product.name,
-                              sku: product.sku,
-                              category: product.category,
-                              price: product.price,
-                              stock: product.stock,
-                              status: product.status,
-                              imageColor: product.imageColor,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  // Pagination (Mock)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'SHOWING 1 TO 10 OF 2,481 PRODUCTS',
-                          style: GoogleFonts.inter(
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[400],
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            _PaginationButton(icon: LucideIcons.chevronLeft),
-                            _PaginationButton(text: '1', isActive: true),
-                            _PaginationButton(text: '2'),
-                            _PaginationButton(text: '3'),
-                            Text(
-                              ' ... ',
-                              style: TextStyle(color: Colors.grey[400]),
-                            ),
-                            _PaginationButton(text: '248'),
-                            _PaginationButton(icon: LucideIcons.chevronRight),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 2.h),
-
-                  // Bottom Stats
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _BottomStatCard(
-                          title: 'TOP SELLING',
-                          value: 'Wireless Headphones',
-                          icon: LucideIcons.trendingUp,
-                          iconColor: Colors.green,
-                          isPrimary: false,
-                        ),
+                          SizedBox(height: 5.h),
+                        ],
                       ),
-                      SizedBox(width: 2.w),
-                      Expanded(
-                        child: _BottomStatCard(
-                          title: 'LOW STOCK ITEMS',
-                          value: '42 Products',
-                          icon: LucideIcons.alertTriangle,
-                          iconColor: Colors.orange,
-                          isPrimary: false,
-                        ),
-                      ),
-                      SizedBox(width: 2.w),
-                      Expanded(
-                        child: _BottomStatCard(
-                          title: 'TOTAL INVENTORY VALUE',
-                          value: '\$1,248,390.00',
-                          icon: LucideIcons.clipboardList,
-                          iconColor: Colors.white,
-                          isPrimary: true, // Blue card
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5.h),
-                ],
-              ),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => NavigationService.pushNamed(AppRouters.addProduct),
+        onPressed: () async {
+          final result =
+              await NavigationService.pushNamed(AppRouters.addProduct);
+          if (result == true) {
+            if (context.mounted) {
+              context
+                  .read<ProductListBloc>()
+                  .add(const ProductListEvent.fetchProducts());
+            }
+          }
+        },
         backgroundColor: AppColors.textSecondary,
         foregroundColor: AppColors.background,
         icon: const Icon(Icons.add),
@@ -666,6 +713,8 @@ class _ProductRow extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     icon: Icon(
                       LucideIcons.edit,
                       size: 12.sp,
@@ -692,7 +741,10 @@ class _ProductRow extends StatelessWidget {
                       );
                     },
                   ),
+                  const SizedBox(width: 12),
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     icon: Icon(
                       LucideIcons.trash2,
                       size: 12.sp,
@@ -790,30 +842,34 @@ class _BottomStatCard extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 20.sp),
           ),
           SizedBox(width: 1.5.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: GoogleFonts.inter(
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isPrimary
-                      ? Colors.white.withValues(alpha: 0.8)
-                      : Colors.grey[500],
-                  letterSpacing: 0.5,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isPrimary
+                        ? Colors.white.withValues(alpha: 0.8)
+                        : Colors.grey[500],
+                    letterSpacing: 0.5,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                value,
-                style: GoogleFonts.inter(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isPrimary ? Colors.white : Colors.black87,
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isPrimary ? Colors.white : Colors.black87,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
