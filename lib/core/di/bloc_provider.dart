@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../features/user/presentation/blocs/userCreate/user_create_bloc.dart';
+import '../../features/user/presentation/blocs/userList/user_list_bloc.dart';
+import '../../features/products/presentation/blocs/productList/product_list_bloc.dart';
+
 class AppBlocProvider extends StatelessWidget {
   const AppBlocProvider({super.key, required this.child});
 
@@ -8,6 +12,19 @@ class AppBlocProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [], child: child);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserCreateBloc>(
+          create: (context) => UserCreateBloc(),
+        ),
+        BlocProvider<UserListBloc>(
+          create: (context) => UserListBloc(),
+        ),
+        BlocProvider<ProductListBloc>(
+          create: (context) => ProductListBloc(),
+        ),
+      ],
+      child: child,
+    );
   }
 }

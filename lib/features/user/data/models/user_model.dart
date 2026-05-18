@@ -27,8 +27,8 @@ class UserModel extends UserEntity {
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : (json['createdAt'] != null
-              ? DateTime.parse(json['createdAt'])
-              : null),
+                ? DateTime.parse(json['createdAt'])
+                : null),
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'])
           : null,
@@ -45,7 +45,6 @@ class UserModel extends UserEntity {
       if (phoneNumber != null) 'phone_number': phoneNumber,
       'ordersCount': ordersCount,
       'active': active,
-      if (profileImage != null) 'profile_image': profileImage,
     };
   }
 

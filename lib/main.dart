@@ -35,7 +35,10 @@ class MyApp extends StatelessWidget {
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            builder: (context, child) => MainLayout(child: child!),
+            builder: (context, child) => ScaffoldMessenger(
+              key: NavigationService.scaffoldMessengerKey,
+              child: MainLayout(child: child!),
+            ),
             material: (context, platform) => MaterialAppData(
               theme: ThemeData(
                 primaryColor: AppColors.primary,

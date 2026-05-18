@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 class NavigationService {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
+  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   static final ValueNotifier<String> currentRoute = ValueNotifier<String>('');
 
   static void updateRoute(String routeName) {
-    currentRoute.value = routeName;
+    if (currentRoute.value != routeName) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        currentRoute.value = routeName;
+      });
+    }
   }
 
   static Future<dynamic> pushNamed(String routeName, {Object? arguments}) {

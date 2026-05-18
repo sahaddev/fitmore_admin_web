@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:fitmore_web/features/coupons/domain/entities/coupon.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'coupon_add_and_l_ist_event.dart';
