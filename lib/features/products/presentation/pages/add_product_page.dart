@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
+import '../../domain/entities/product.dart';
+import '../blocs/createProduct/create_product_bloc.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -31,6 +37,41 @@ class _AddProductPageState extends State<AddProductPage> {
   bool _trackStock = true;
   bool _isPublished = true;
   final List<String> _tags = ['modern', 'oak'];
+  String? _pickedImageBase64;
+  String? _pickedImage2Base64;
+  String? _pickedImage3Base64;
+  String? _pickedImage4Base64;
+
+  void _onPickImage(int slot) async {
+    try {
+      FilePickerResult? result = await FilePicker.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final bytes = result.files.single.bytes!;
+        final extension = result.files.single.extension ?? 'png';
+        final base64 = 'data:image/$extension;base64,${base64Encode(bytes)}';
+        setState(() {
+          if (slot == 1) {
+            _pickedImageBase64 = base64;
+          } else if (slot == 2) {
+            _pickedImage2Base64 = base64;
+          } else if (slot == 3) {
+            _pickedImage3Base64 = base64;
+          } else if (slot == 4) {
+            _pickedImage4Base64 = base64;
+          }
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -45,144 +86,201 @@ class _AddProductPageState extends State<AddProductPage> {
     super.dispose();
   }
 
-  void _onSave() async {
-    // For now, just validation and close (UI Demo)
+  void _onSave(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product saved successfully (Demo)')),
+      final name = _nameController.text.trim();
+      final subTitle = _subTitleController.text.trim();
+      final desc = _descController.text.trim();
+      final price = int.tryParse(_priceController.text.trim()) ?? 0;
+      final quantity = int.tryParse(_countController.text.trim()) ?? 0;
+
+      final product = ProductEntity(
+        title: name,
+        subTitle: subTitle,
+        description: desc,
+        price: price,
+        category: _selectedCategory,
+        quantity: quantity,
+        active: _isPublished,
+        imageOne: _pickedImageBase64 ?? '',
+        imageTwo: _pickedImage2Base64 ?? '',
+        imageThree: _pickedImage3Base64 ?? '',
+        imageFour: _pickedImage4Base64 ?? '',
       );
-      context.pop();
+
+      context.read<CreateProductBloc>().add(
+            CreateProductEvent.createProduct(product: product),
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FC),
-      body: Column(
-        children: [
-          // Top Action Bar
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-            color: Colors.white,
-            child: Row(
+    return BlocProvider(
+      create: (context) => CreateProductBloc(),
+      child: BlocConsumer<CreateProductBloc, CreateProductState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            success: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Product created successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            },
+            failure: (message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to save product: $message'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+          );
+        },
+        builder: (context, state) {
+          final isLoading = state is CreateProductStateLoading;
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFF8F9FC),
+            body: Column(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Products',
-                          style: GoogleFonts.inter(
-                            color: Colors.grey[500],
-                            fontSize: 9.sp,
+                // Top Action Bar
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Products',
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey[500],
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 12.sp,
+                                color: Colors.grey[400],
+                              ),
+                              Text(
+                                'Add New Product',
+                                style: GoogleFonts.inter(
+                                  color: Colors.black87,
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 12.sp,
-                          color: Colors.grey[400],
-                        ),
-                        Text(
-                          'Add New Product',
-                          style: GoogleFonts.inter(
-                            color: Colors.black87,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w500,
+                          SizedBox(height: 0.5.h),
+                          Text(
+                            'New Store Listing',
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 0.5.h),
-                    Text(
-                      'New Store Listing',
-                      style: GoogleFonts.inter(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'Discard Draft',
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10.sp,
-                    ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: isLoading ? null : () => context.pop(),
+                        child: Text(
+                          'Discard Draft',
+                          style: GoogleFonts.inter(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      ElevatedButton.icon(
+                        onPressed: isLoading ? null : () => _onSave(context),
+                        icon: isLoading
+                            ? const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Icon(LucideIcons.save, size: 14.sp),
+                        label: Text(
+                          isLoading ? 'Saving...' : 'Save Product',
+                          style: GoogleFonts.inter(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF258fb0),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 2.w,
+                            vertical: 1.5.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 1.w),
-                ElevatedButton.icon(
-                  onPressed: _onSave,
-                  icon: Icon(LucideIcons.save, size: 14.sp),
-                  label: Text(
-                    'Save Product',
-                    style: GoogleFonts.inter(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF258fb0),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 1.5.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                Divider(height: 1, color: Colors.grey[200]),
+
+                // Scrollable Form Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(2.w),
+                    child: Form(
+                      key: _formKey,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Column (Main Form)
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              children: [
+                                _buildBasicInfoCard(),
+                                SizedBox(height: 2.h),
+                                _buildPricingInventoryCard(),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 2.w),
+                          // Right Column (Media & Settings)
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                _buildProductMediaCard(context),
+                                SizedBox(height: 2.h),
+                                _buildTagsSEOCard(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          Divider(height: 1, color: Colors.grey[200]),
-
-          // Scrollable Form Content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(2.w),
-              child: Form(
-                key: _formKey,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left Column (Main Form)
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          _buildBasicInfoCard(),
-                          SizedBox(height: 2.h),
-                          _buildPricingInventoryCard(),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 2.w),
-                    // Right Column (Media & Settings)
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          _buildProductMediaCard(),
-                          SizedBox(height: 2.h),
-                          _buildTagsSEOCard(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -428,7 +526,16 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  Widget _buildProductMediaCard() {
+  Widget _buildProductMediaCard(BuildContext context) {
+    Uint8List? imageBytes;
+    if (_pickedImageBase64 != null) {
+      try {
+        imageBytes = base64Decode(_pickedImageBase64!.split(',').last);
+      } catch (e) {
+        // Handle error
+      }
+    }
+
     return _SectionCard(
       title: 'Product Media',
       icon: LucideIcons.image,
@@ -451,62 +558,90 @@ class _AddProductPageState extends State<AddProductPage> {
         children: [
           AspectRatio(
             aspectRatio: 1.2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8E6DE),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF258fb0), width: 2),
-              ),
-              child: Stack(
-                children: [
-                  Center(
-                    // Placeholder for main image
-                    child: Container(
-                      width: 40,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+            child: InkWell(
+              onTap: () => _onPickImage(1),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8E6DE),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF258fb0), width: 2),
+                ),
+                child: imageBytes != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.memory(
+                          imageBytes,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
+                      )
+                    : Stack(
+                        children: [
+                          Center(
+                            // Placeholder for main image
+                            child: Container(
+                              width: 40,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF258fb0),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'MAIN',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 8.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF258fb0),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        'MAIN',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 8.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
           SizedBox(height: 1.h),
           Row(
             children: [
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(2),
+                  imageBase64: _pickedImage2Base64,
+                ),
+              ),
               SizedBox(width: 1.w),
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(3),
+                  imageBase64: _pickedImage3Base64,
+                ),
+              ),
               SizedBox(width: 1.w),
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(4),
+                  imageBase64: _pickedImage4Base64,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 1.h),
@@ -750,37 +885,68 @@ class _SectionCard extends StatelessWidget {
 }
 
 class _MediaPlaceholder extends StatelessWidget {
+  final VoidCallback onTap;
+  final String? imageBase64;
+
+  const _MediaPlaceholder({
+    required this.onTap,
+    this.imageBase64,
+  });
+
   @override
   Widget build(BuildContext context) {
+    Uint8List? imageBytes;
+    if (imageBase64 != null && imageBase64!.isNotEmpty) {
+      try {
+        imageBytes = base64Decode(imageBase64!.split(',').last);
+      } catch (e) {
+        // Handle error
+      }
+    }
+
     return AspectRatio(
       aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey[200]!,
-            width: 2,
-            style: BorderStyle.solid,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey[200]!,
+              width: 2,
+              style: BorderStyle.solid,
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: DottedBorder(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(LucideIcons.camera, color: Colors.grey[400], size: 16.sp),
-                const SizedBox(height: 4),
-                Text(
-                  'ADD VIEW',
-                  style: GoogleFonts.inter(
-                    fontSize: 7.sp,
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.bold,
+          child: imageBytes != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.memory(
+                    imageBytes,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                )
+              : DottedBorder(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(LucideIcons.camera,
+                            color: Colors.grey[400], size: 16.sp),
+                        const SizedBox(height: 4),
+                        Text(
+                          'ADD VIEW',
+                          style: GoogleFonts.inter(
+                            fontSize: 7.sp,
+                            color: Colors.grey[400],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
         ),
       ),
     );

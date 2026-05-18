@@ -34,69 +34,6 @@ class Product {
   });
 }
 
-final List<Product> demoProducts = [
-  Product(
-    id: '1',
-    name: 'Studio Pro Wireless',
-    sku: 'HEAD-PRO-01',
-    category: 'Electronics',
-    price: 249.00,
-    stock: 82,
-    status: 'In Stock',
-    imageColor: Colors.black,
-  ),
-  Product(
-    id: '2',
-    name: 'Nordic Office Chair',
-    sku: 'FURN-CHR-99',
-    category: 'Furniture',
-    price: 320.50,
-    stock: 12,
-    status: 'Low Stock',
-    imageColor: Colors.brown[300]!,
-  ),
-  Product(
-    id: '3',
-    name: 'Minimalist Timepiece',
-    sku: 'ACC-WCH-04',
-    category: 'Accessories',
-    price: 159.00,
-    stock: 45,
-    status: 'In Stock',
-    imageColor: Colors.blueGrey,
-  ),
-  Product(
-    id: '4',
-    name: 'Eco Wooden Lamp',
-    sku: 'FURN-LMP-02',
-    category: 'Furniture',
-    price: 89.99,
-    stock: 3,
-    status: 'Critical',
-    imageColor: Colors.amber[800]!,
-  ),
-  Product(
-    id: '5',
-    name: 'Smart Home Hub',
-    sku: 'SMT-HUB-05',
-    category: 'Electronics',
-    price: 129.00,
-    stock: 156,
-    status: 'In Stock',
-    imageColor: Colors.indigo,
-  ),
-  Product(
-    id: '6',
-    name: 'Leather Messenger Bag',
-    sku: 'ACC-BAG-09',
-    category: 'Accessories',
-    price: 185.00,
-    stock: 8,
-    status: 'Low Stock',
-    imageColor: Colors.orange[900]!,
-  ),
-];
-
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});
 
@@ -127,8 +64,10 @@ class _ProductListPageState extends State<ProductListPage> {
             child: BlocBuilder<ProductListBloc, ProductListState>(
               builder: (context, state) {
                 return state.when(
-                  initial: () => const Center(child: CircularProgressIndicator()),
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  initial: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   failure: (message) => Center(
                     child: Text(
                       'Failed to load products: $message',
@@ -141,14 +80,18 @@ class _ProductListPageState extends State<ProductListPage> {
                       0.0,
                       (prev, p) => prev + (p.price * p.quantity),
                     );
-                    final lowStockCount =
-                        products.where((p) => p.quantity <= 10).length;
-                    final topSelling =
-                        products.isNotEmpty ? products.first.title : 'N/A';
+                    final lowStockCount = products
+                        .where((p) => p.quantity <= 10)
+                        .length;
+                    final topSelling = products.isNotEmpty
+                        ? products.first.title
+                        : 'N/A';
 
                     return SingleChildScrollView(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 2.w,
+                        vertical: 2.h,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -181,11 +124,16 @@ class _ProductListPageState extends State<ProductListPage> {
                                 children: [
                                   OutlinedButton.icon(
                                     onPressed: () {},
-                                    icon: Icon(LucideIcons.download, size: 14.sp),
+                                    icon: Icon(
+                                      LucideIcons.download,
+                                      size: 14.sp,
+                                    ),
                                     label: const Text('Export CSV'),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: Colors.grey[700],
-                                      side: BorderSide(color: Colors.grey[300]!),
+                                      side: BorderSide(
+                                        color: Colors.grey[300]!,
+                                      ),
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 2.w,
                                         vertical: 1.5.h,
@@ -276,7 +224,9 @@ class _ProductListPageState extends State<ProductListPage> {
                                 // Table Rows (Dynamic from server)
                                 if (products.isEmpty)
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 5.h,
+                                    ),
                                     child: const Center(
                                       child: Text('No products found.'),
                                     ),
@@ -292,8 +242,8 @@ class _ProductListPageState extends State<ProductListPage> {
                                       stock: product.quantity,
                                       status: product.active
                                           ? (product.quantity > 10
-                                              ? 'In Stock'
-                                              : 'Low Stock')
+                                                ? 'In Stock'
+                                                : 'Low Stock')
                                           : 'Out of Stock',
                                       imageColor: Colors.blueGrey,
                                     ),
@@ -384,13 +334,14 @@ class _ProductListPageState extends State<ProductListPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final result =
-              await NavigationService.pushNamed(AppRouters.addProduct);
+          final result = await NavigationService.pushNamed(
+            AppRouters.addProduct,
+          );
           if (result == true) {
             if (context.mounted) {
-              context
-                  .read<ProductListBloc>()
-                  .add(const ProductListEvent.fetchProducts());
+              context.read<ProductListBloc>().add(
+                const ProductListEvent.fetchProducts(),
+              );
             }
           }
         },
@@ -563,7 +514,8 @@ class _ProductRow extends StatelessWidget {
           id: int.tryParse(id) ?? 0,
           title: name,
           subTitle: 'Premium $category item',
-          description: 'This is a high-quality $name from our $category collection.',
+          description:
+              'This is a high-quality $name from our $category collection.',
           imageOne: '',
           imageTwo: '',
           imageThree: '',
@@ -599,7 +551,11 @@ class _ProductRow extends StatelessWidget {
                       image: null, // Placeholder
                     ),
                     child: Center(
-                      child: Icon(LucideIcons.image, size: 20, color: imageColor),
+                      child: Icon(
+                        LucideIcons.image,
+                        size: 20,
+                        color: imageColor,
+                      ),
                     ),
                   ),
                   SizedBox(width: 1.w),
@@ -725,7 +681,8 @@ class _ProductRow extends StatelessWidget {
                         id: int.tryParse(id) ?? 0,
                         title: name,
                         subTitle: 'Premium $category item',
-                        description: 'This is a high-quality $name from our $category collection.',
+                        description:
+                            'This is a high-quality $name from our $category collection.',
                         imageOne: '',
                         imageTwo: '',
                         imageThree: '',

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:fitmore_web/core/network/dio_client.dart';
 import 'package:fitmore_web/core/network/dio_error_handler.dart';
@@ -19,6 +21,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       final response = await _dioClient.get('/api/products');
       if (response.statusCode == 200) {
+        int length = response.data['datas'].length;
+        log(length.toString());
         return (response.data['datas'] as List<dynamic>)
             .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
             .toList();
@@ -42,6 +46,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         '/api/product',
         data: product.toJson(),
       );
+      log(response.data.toString());
+      log(response.requestOptions.path.toString());
+      log(response.statusCode.toString());
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw DioException(
           requestOptions: RequestOptions(path: '/api/product'),
