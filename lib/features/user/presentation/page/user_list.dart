@@ -2,81 +2,14 @@ import 'package:fitmore_web/features/dashboard/presentation/widgets/dashboard_he
 import 'package:fitmore_web/features/user/domain/entities/user.dart';
 import 'package:fitmore_web/features/user/presentation/page/user_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
-// Local User model removed in favor of UserEntity
+import 'package:fitmore_web/features/user/presentation/blocs/userList/user_list_bloc.dart';
 
-final List<UserEntity> demoUsers = [
-  UserEntity(
-    id: 1,
-    username: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    phoneNumber: '+1 (555) 123-4567',
-    profileImage: 'https://i.pravatar.cc/150?u=sarah',
-    ordersCount: 12,
-    createdAt: DateTime.now().subtract(const Duration(days: 45)),
-    active: true,
-    password: 'password123',
-  ),
-  UserEntity(
-    id: 2,
-    username: 'Michael Chen',
-    email: 'm.chen@example.com',
-    phoneNumber: '+1 (555) 987-6543',
-    profileImage: 'https://i.pravatar.cc/150?u=michael',
-    ordersCount: 5,
-    createdAt: DateTime.now().subtract(const Duration(days: 120)),
-    active: true,
-    password: 'password123',
-  ),
-  UserEntity(
-    id: 3,
-    username: 'Emma Wilson',
-    email: 'emma.w@example.com',
-    phoneNumber: '+1 (555) 456-7890',
-    profileImage: 'https://i.pravatar.cc/150?u=emma',
-    ordersCount: 0,
-    createdAt: DateTime.now().subtract(const Duration(days: 5)),
-    active: true,
-    password: 'password123',
-  ),
-  UserEntity(
-    id: 4,
-    username: 'David Rodriguez',
-    email: 'david.r@example.com',
-    phoneNumber: '+1 (555) 234-5678',
-    profileImage: 'https://i.pravatar.cc/150?u=david',
-    ordersCount: 24,
-    createdAt: DateTime.now().subtract(const Duration(days: 300)),
-    active: false,
-    password: 'password123',
-  ),
-  UserEntity(
-    id: 5,
-    username: 'Lisa Brown',
-    email: 'lisa.b@example.com',
-    phoneNumber: '+1 (555) 876-5432',
-    profileImage: 'https://i.pravatar.cc/150?u=lisa',
-    ordersCount: 8,
-    createdAt: DateTime.now().subtract(const Duration(days: 15)),
-    active: true,
-    password: 'password123',
-  ),
-  UserEntity(
-    id: 6,
-    username: 'James Smith',
-    email: 'j.smith@example.com',
-    phoneNumber: '+1 (555) 345-6789',
-    profileImage: 'https://i.pravatar.cc/150?u=james',
-    ordersCount: 2,
-    createdAt: DateTime.now().subtract(const Duration(days: 60)),
-    active: true,
-    password: 'password123',
-  ),
-];
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
@@ -87,23 +20,30 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   String activeTab = 'All Users';
-  bool isLoading = false;
-  List<UserEntity> users = demoUsers;
 
-  List<UserEntity> get filteredUsers {
-    if (activeTab == 'Active') {
-      return users.where((u) => u.active).toList();
-    } else if (activeTab == 'Flagged') {
-      return users.where((u) => !u.active).toList();
-    }
-    return users;
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserListBloc>().add(const UserListEvent.fetchUsers());
   }
 
-  void _showUserDialog([UserEntity? user]) {
-    showDialog(
+  List<UserEntity> getFilteredUsers(List<UserEntity> allUsers) {
+    if (activeTab == 'Active') {
+      return allUsers.where((u) => u.active).toList();
+    } else if (activeTab == 'Flagged') {
+      return allUsers.where((u) => !u.active).toList();
+    }
+    return allUsers;
+  }
+
+  void _showUserDialog([UserEntity? user]) async {
+    await showDialog(
       context: context,
       builder: (context) => UserDialog(user: user),
     );
+    if (mounted) {
+      context.read<UserListBloc>().add(const UserListEvent.fetchUsers());
+    }
   }
 
   @override
@@ -114,22 +54,43 @@ class _UserListPageState extends State<UserListPage> {
         children: [
           const DashboardHeader(title: 'User Management'),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPageHeader(),
-                  SizedBox(height: 3.h),
-                  _buildTabs(),
-                  SizedBox(height: 2.h),
-                  if (isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else
-                    _buildUsersTable(),
-                  SizedBox(height: 5.h),
-                ],
-              ),
+            child: BlocBuilder<UserListBloc, UserListState>(
+              builder: (context, state) {
+                List<UserEntity> currentUsers = [];
+                bool isLoading = state is UserListStateLoading || state is UserListStateInitial;
+                String? errorMsg;
+                
+                if (state is UserListStateLoaded) {
+                  currentUsers = state.users;
+                } else if (state is UserListStateFailure) {
+                  errorMsg = state.message;
+                }
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPageHeader(currentUsers.length),
+                      SizedBox(height: 3.h),
+                      _buildTabs(),
+                      SizedBox(height: 2.h),
+                      if (isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else if (errorMsg != null)
+                        Center(
+                          child: Text(
+                            errorMsg,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        )
+                      else
+                        _buildUsersTable(currentUsers),
+                      SizedBox(height: 5.h),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -137,7 +98,7 @@ class _UserListPageState extends State<UserListPage> {
     );
   }
 
-  Widget _buildPageHeader() {
+  Widget _buildPageHeader(int usersCount) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -154,7 +115,7 @@ class _UserListPageState extends State<UserListPage> {
             ),
             SizedBox(height: 0.5.h),
             Text(
-              'Manage and monitor ${users.length} registered customers in your database.',
+              'Manage and monitor $usersCount registered customers in your database.',
               style: GoogleFonts.inter(
                 fontSize: 10.sp,
                 color: Colors.grey[500],
@@ -238,8 +199,8 @@ class _UserListPageState extends State<UserListPage> {
     );
   }
 
-  Widget _buildUsersTable() {
-    final filtered = filteredUsers;
+  Widget _buildUsersTable(List<UserEntity> allUsers) {
+    final filtered = getFilteredUsers(allUsers);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

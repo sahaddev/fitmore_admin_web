@@ -19,13 +19,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<UserModel>> getUsers() async {
-    log('getUsers called', name: 'UserRemoteDataSourceImpl');
     try {
-      final response = await _dioClient.get(ApiConstants.usersEndpoint);
-      log(
-        'getUsers response: ${response.data}',
-        name: 'UserRemoteDataSourceImpl',
-      );
+      final response = await _dioClient.get('/api/users');
       if (response.statusCode == 200) {
         return (response.data['datas'] as List<dynamic>)
             .map((json) => UserModel.fromJson(json as Map<String, dynamic>))
@@ -47,8 +42,6 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<UserModel> createUser(UserModel user) async {
     try {
       final response = await _dioClient.post('/api/user', data: user.toJson());
-      log('response status code : ${response.statusCode}');
-      log('response data : ${response.data}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         return UserModel.fromJson(response.data['user']);
       } else {
