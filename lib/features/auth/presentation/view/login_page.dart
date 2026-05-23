@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../core/utils/validators.dart';
+import 'signup_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -330,7 +331,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierColor: Colors.black.withValues(alpha: 0.5),
+                                    builder: (dialogContext) => const SignUpDialog(),
+                                  );
+                                },
                                 child: Text(
                                   "Create Account",
                                   style: GoogleFonts.inter(
