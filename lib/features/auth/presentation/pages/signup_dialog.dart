@@ -133,7 +133,8 @@ class _SignUpDialogState extends State<SignUpDialog> {
                         controller: _usernameController,
                         icon: LucideIcons.user,
                         hint: 'Username',
-                        validator: (val) => Validators.validateRequired(val, 'Username'),
+                        validator: (val) =>
+                            Validators.validateRequired(val, 'Username'),
                       ),
                       const SizedBox(height: 16),
 
@@ -152,7 +153,8 @@ class _SignUpDialogState extends State<SignUpDialog> {
                         controller: _phoneController,
                         icon: LucideIcons.phone,
                         hint: 'Phone number',
-                        validator: (val) => Validators.validateRequired(val, 'Phone number'),
+                        validator: (val) =>
+                            Validators.validateRequired(val, 'Phone number'),
                         keyboardType: TextInputType.phone,
                       ),
                       const SizedBox(height: 16),
@@ -165,7 +167,9 @@ class _SignUpDialogState extends State<SignUpDialog> {
                         isPassword: true,
                         obscureText: _isPasswordObscure,
                         onTogglePassword: () {
-                          setState(() => _isPasswordObscure = !_isPasswordObscure);
+                          setState(
+                            () => _isPasswordObscure = !_isPasswordObscure,
+                          );
                         },
                         validator: Validators.validatePassword,
                       ),
@@ -179,7 +183,9 @@ class _SignUpDialogState extends State<SignUpDialog> {
                         isPassword: true,
                         obscureText: _isConfirmObscure,
                         onTogglePassword: () {
-                          setState(() => _isConfirmObscure = !_isConfirmObscure);
+                          setState(
+                            () => _isConfirmObscure = !_isConfirmObscure,
+                          );
                         },
                         validator: (val) {
                           if (val != _passwordController.text) {
@@ -199,8 +205,12 @@ class _SignUpDialogState extends State<SignUpDialog> {
                               onPressed: () => Navigator.of(context).pop(),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                side: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 18,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -221,9 +231,16 @@ class _SignUpDialogState extends State<SignUpDialog> {
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _onRegister,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 141, 19, 250),
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  141,
+                                  19,
+                                  250,
+                                ),
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 18,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -234,7 +251,10 @@ class _SignUpDialogState extends State<SignUpDialog> {
                                       height: 20,
                                       width: 20,
                                       child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                         strokeWidth: 2,
                                       ),
                                     )
@@ -324,10 +344,7 @@ class _SignUpDialogState extends State<SignUpDialog> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.red.withValues(alpha: 0.5)),
         ),
-        errorStyle: GoogleFonts.inter(
-          fontSize: 8.sp,
-          color: Colors.redAccent,
-        ),
+        errorStyle: GoogleFonts.inter(fontSize: 8.sp, color: Colors.redAccent),
       ),
     );
   }

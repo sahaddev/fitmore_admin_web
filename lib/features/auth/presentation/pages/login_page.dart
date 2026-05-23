@@ -334,8 +334,11 @@ class _LoginPageState extends State<LoginPage> {
                                 onTap: () {
                                   showDialog(
                                     context: context,
-                                    barrierColor: Colors.black.withValues(alpha: 0.5),
-                                    builder: (dialogContext) => const SignUpDialog(),
+                                    barrierColor: Colors.black.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    builder: (dialogContext) =>
+                                        const SignUpDialog(),
                                   );
                                 },
                                 child: Text(

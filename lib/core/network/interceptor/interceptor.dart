@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:fitmore_web/core/constants/storage_key.dart';
+import 'package:fitmore_web/core/di/service_locator.dart';
 
 class AppInterceptor extends Interceptor {
   @override
@@ -6,6 +8,12 @@ class AppInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final String? token = await ServiceLocator.storageService.getString(
+      StorageKey.token,
+    );
+    if (token != null && token.isNotEmpty) {
+      options.headers["Authorization"] = "Bearer $token";
+    }
     handler.next(options);
   }
 
