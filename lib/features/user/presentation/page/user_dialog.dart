@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 
 import '../blocs/userCreate/user_create_bloc.dart';
+import '../../../../core/widgets/custom_status_dialog.dart';
 
 class UserDialog extends StatefulWidget {
   final UserEntity? user;
@@ -57,20 +58,25 @@ class _UserDialogState extends State<UserDialog> {
     return BlocConsumer<UserCreateBloc, UserCreateState>(
       listener: (context, state) {
         if (state is UserCreateStateSuccess) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                widget.user == null
-                    ? 'User created successfully'
-                    : 'User updated successfully',
-              ),
-              backgroundColor: Colors.green,
-            ),
+          showCustomStatusDialog(
+            context: context,
+            status: DialogStatus.success,
+            title: 'Success!',
+            message: widget.user == null
+                ? 'User created successfully.'
+                : 'User updated successfully.',
+            buttonText: 'Done',
+            onButtonPressed: () {
+              Navigator.pop(context);
+            },
           );
         } else if (state is UserCreateStateError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          showCustomStatusDialog(
+            context: context,
+            status: DialogStatus.error,
+            title: 'Error',
+            message: state.message,
+            buttonText: 'Close',
           );
         }
       },

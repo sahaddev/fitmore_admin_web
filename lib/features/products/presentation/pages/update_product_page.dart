@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../../../core/widgets/custom_status_dialog.dart';
 import '../../domain/entities/product.dart';
 import '../blocs/updateProduct/update_product_bloc.dart';
 
@@ -153,20 +154,24 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
         listener: (context, state) {
           state.whenOrNull(
             success: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Product updated successfully!'),
-                  backgroundColor: Colors.green,
-                ),
+              showCustomStatusDialog(
+                context: context,
+                status: DialogStatus.success,
+                title: 'Success!',
+                message: 'Product updated successfully.',
+                buttonText: 'Done',
+                onButtonPressed: () {
+                  Navigator.of(context).pop(true);
+                },
               );
-              Navigator.pop(context, true);
             },
             failure: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to update product: $message'),
-                  backgroundColor: Colors.red,
-                ),
+              showCustomStatusDialog(
+                context: context,
+                status: DialogStatus.error,
+                title: 'Error',
+                message: 'Failed to update product:\n$message',
+                buttonText: 'Close',
               );
             },
           );

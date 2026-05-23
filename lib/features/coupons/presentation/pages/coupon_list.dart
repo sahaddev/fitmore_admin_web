@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
 import '../../../../core/widgets/error_state_widget.dart';
+import '../../../../core/widgets/custom_status_dialog.dart';
 
 class CouponListPage extends StatefulWidget {
   const CouponListPage({super.key});
@@ -74,24 +75,27 @@ class _CouponListPageState extends State<CouponListPage> {
             });
             _codeController.clear();
             _valueController.clear();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Campaign generated successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
             context.read<CouponAddAndLIstBloc>().add(const CouponAddAndLIstEvent.fetchCoupons());
+            
+            showCustomStatusDialog(
+              context: context,
+              status: DialogStatus.success,
+              title: 'Success!',
+              message: 'Campaign generated successfully!',
+              buttonText: 'Done',
+            );
           },
           failure: (message) {
             setState(() {
               _isLoading = false;
               _errorMessage = message;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: $message'),
-                backgroundColor: Colors.red,
-              ),
+            showCustomStatusDialog(
+              context: context,
+              status: DialogStatus.error,
+              title: 'Error',
+              message: 'Error: $message',
+              buttonText: 'Close',
             );
           },
           orElse: () {},

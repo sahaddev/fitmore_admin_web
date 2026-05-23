@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../../../core/widgets/custom_status_dialog.dart';
 import '../../domain/entities/product.dart';
 import '../blocs/createProduct/create_product_bloc.dart';
 
@@ -66,9 +67,9 @@ class _AddProductPageState extends State<AddProductPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
     }
   }
 
@@ -108,8 +109,8 @@ class _AddProductPageState extends State<AddProductPage> {
       );
 
       context.read<CreateProductBloc>().add(
-            CreateProductEvent.createProduct(product: product),
-          );
+        CreateProductEvent.createProduct(product: product),
+      );
     }
   }
 
@@ -121,20 +122,24 @@ class _AddProductPageState extends State<AddProductPage> {
         listener: (context, state) {
           state.whenOrNull(
             success: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Product created successfully!'),
-                  backgroundColor: Colors.green,
-                ),
+              showCustomStatusDialog(
+                context: context,
+                status: DialogStatus.success,
+                title: 'Success!',
+                message: 'Product created successfully.',
+                buttonText: 'Done',
+                onButtonPressed: () {
+                  Navigator.of(context).pop(true);
+                },
               );
-              Navigator.of(context).pop(true);
             },
             failure: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to save product: $message'),
-                  backgroundColor: Colors.red,
-                ),
+              showCustomStatusDialog(
+                context: context,
+                status: DialogStatus.error,
+                title: 'Error',
+                message: 'Failed to save product:\n$message',
+                buttonText: 'Close',
               );
             },
           );
@@ -192,7 +197,9 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const Spacer(),
                       TextButton(
-                        onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+                        onPressed: isLoading
+                            ? null
+                            : () => Navigator.of(context).pop(),
                         child: Text(
                           'Discard Draft',
                           style: GoogleFonts.inter(
@@ -887,10 +894,7 @@ class _MediaPlaceholder extends StatelessWidget {
   final VoidCallback onTap;
   final String? imageBase64;
 
-  const _MediaPlaceholder({
-    required this.onTap,
-    this.imageBase64,
-  });
+  const _MediaPlaceholder({required this.onTap, this.imageBase64});
 
   @override
   Widget build(BuildContext context) {
@@ -931,8 +935,11 @@ class _MediaPlaceholder extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(LucideIcons.camera,
-                            color: Colors.grey[400], size: 16.sp),
+                        Icon(
+                          LucideIcons.camera,
+                          color: Colors.grey[400],
+                          size: 16.sp,
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           'ADD VIEW',

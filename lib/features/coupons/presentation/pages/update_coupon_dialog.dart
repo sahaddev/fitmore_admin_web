@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitmore_web/features/coupons/presentation/blocs/couponUpdate/coupon_update_bloc.dart';
 import 'package:fitmore_web/features/coupons/presentation/blocs/couponList/coupon_add_and_l_ist_bloc.dart';
-
+import '../../../../core/widgets/custom_status_dialog.dart';
 class UpdateCouponDialog extends StatefulWidget {
   final CouponEntity coupon;
 
@@ -77,25 +77,27 @@ class _UpdateCouponDialogState extends State<UpdateCouponDialog> {
       listener: (context, state) {
         state.maybeWhen(
           success: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Coupon updated successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            showCustomStatusDialog(
+              context: context,
+              status: DialogStatus.success,
+              title: 'Success!',
+              message: 'Coupon updated successfully!',
+              buttonText: 'Done',
+              onButtonPressed: () {
+                context
+                    .read<CouponAddAndLIstBloc>()
+                    .add(const CouponAddAndLIstEvent.fetchCoupons());
+                Navigator.pop(context);
+              },
             );
-            // Refresh coupon list
-            context
-                .read<CouponAddAndLIstBloc>()
-                .add(const CouponAddAndLIstEvent.fetchCoupons());
-            // Dismiss dialog
-            Navigator.pop(context);
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Update failed: $message'),
-                backgroundColor: Colors.red,
-              ),
+            showCustomStatusDialog(
+              context: context,
+              status: DialogStatus.error,
+              title: 'Error',
+              message: 'Update failed: $message',
+              buttonText: 'Close',
             );
           },
           orElse: () {},
