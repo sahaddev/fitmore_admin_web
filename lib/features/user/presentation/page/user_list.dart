@@ -9,7 +9,7 @@ import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
 import 'package:fitmore_web/features/user/presentation/blocs/userList/user_list_bloc.dart';
-
+import '../../../../core/widgets/error_state_widget.dart';
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
@@ -57,9 +57,11 @@ class _UserListPageState extends State<UserListPage> {
             child: BlocBuilder<UserListBloc, UserListState>(
               builder: (context, state) {
                 List<UserEntity> currentUsers = [];
-                bool isLoading = state is UserListStateLoading || state is UserListStateInitial;
+                bool isLoading =
+                    state is UserListStateLoading ||
+                    state is UserListStateInitial;
                 String? errorMsg;
-                
+
                 if (state is UserListStateLoaded) {
                   currentUsers = state.users;
                 } else if (state is UserListStateFailure) {
@@ -78,11 +80,13 @@ class _UserListPageState extends State<UserListPage> {
                       if (isLoading)
                         const Center(child: CircularProgressIndicator())
                       else if (errorMsg != null)
-                        Center(
-                          child: Text(
-                            errorMsg,
-                            style: const TextStyle(color: Colors.red),
-                          ),
+                        ErrorStateWidget(
+                          message: errorMsg,
+                          onRefresh: () {
+                            context.read<UserListBloc>().add(
+                              const UserListEvent.fetchUsers(),
+                            );
+                          },
                         )
                       else
                         _buildUsersTable(currentUsers),

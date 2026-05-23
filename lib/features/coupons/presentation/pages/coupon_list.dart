@@ -9,6 +9,7 @@ import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
+import '../../../../core/widgets/error_state_widget.dart';
 
 class CouponListPage extends StatefulWidget {
   const CouponListPage({super.key});
@@ -24,6 +25,7 @@ class _CouponListPageState extends State<CouponListPage> {
 
   List<CouponEntity> _coupons = [];
   bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -53,16 +55,23 @@ class _CouponListPageState extends State<CouponListPage> {
       listener: (context, state) {
         state.maybeWhen(
           loading: () {
-            setState(() => _isLoading = true);
+            setState(() {
+              _isLoading = true;
+              _errorMessage = null;
+            });
           },
           loaded: (coupons) {
             setState(() {
               _isLoading = false;
               _coupons = coupons;
+              _errorMessage = null;
             });
           },
           success: () {
-            setState(() => _isLoading = false);
+            setState(() {
+              _isLoading = false;
+              _errorMessage = null;
+            });
             _codeController.clear();
             _valueController.clear();
             ScaffoldMessenger.of(context).showSnackBar(
@@ -74,7 +83,10 @@ class _CouponListPageState extends State<CouponListPage> {
             context.read<CouponAddAndLIstBloc>().add(const CouponAddAndLIstEvent.fetchCoupons());
           },
           failure: (message) {
-            setState(() => _isLoading = false);
+            setState(() {
+              _isLoading = false;
+              _errorMessage = message;
+            });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Error: $message'),
@@ -496,6 +508,20 @@ class _CouponListPageState extends State<CouponListPage> {
                                 height: 200,
                                 alignment: Alignment.center,
                                 child: const CircularProgressIndicator(),
+                              )
+                            else if (_errorMessage != null && _coupons.isEmpty)
+                              Container(
+                                width: constraints.maxWidth,
+                                height: 200,
+                                alignment: Alignment.center,
+                                child: ErrorStateWidget(
+                                  message: _errorMessage!,
+                                  onRefresh: () {
+                                    context.read<CouponAddAndLIstBloc>().add(
+                                      const CouponAddAndLIstEvent.fetchCoupons(),
+                                    );
+                                  },
+                                ),
                               )
                             else if (_coupons.isEmpty)
                               Container(

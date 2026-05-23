@@ -10,6 +10,7 @@ import '../../domain/entities/product.dart';
 import '../blocs/productList/product_list_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/error_state_widget.dart';
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
 
 class Product {
@@ -68,11 +69,13 @@ class _ProductListPageState extends State<ProductListPage> {
                       const Center(child: CircularProgressIndicator()),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  failure: (message) => Center(
-                    child: Text(
-                      'Failed to load products: $message',
-                      style: GoogleFonts.inter(color: Colors.red),
-                    ),
+                  failure: (message) => ErrorStateWidget(
+                    message: 'Failed to load products: $message',
+                    onRefresh: () {
+                      context.read<ProductListBloc>().add(
+                        const ProductListEvent.fetchProducts(),
+                      );
+                    },
                   ),
                   loaded: (products) {
                     // Compute metrics dynamically from the live list of products
@@ -792,7 +795,10 @@ class _ProductRow extends StatelessWidget {
                       onPressed: () => Navigator.of(dialogContext).pop(),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.grey[300]!),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -816,16 +822,17 @@ class _ProductRow extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[600],
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Text(
                         'Delete',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],
