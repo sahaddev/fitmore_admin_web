@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../domain/entities/product.dart';
+import '../blocs/updateProduct/update_product_bloc.dart';
 
 class UpdateProductPage extends StatefulWidget {
   final ProductEntity product;
@@ -32,6 +35,41 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
   late bool _trackStock;
   late bool _isPublished;
   late List<String> _tags;
+  String? _pickedImageBase64;
+  String? _pickedImage2Base64;
+  String? _pickedImage3Base64;
+  String? _pickedImage4Base64;
+
+  void _onPickImage(int slot) async {
+    try {
+      FilePickerResult? result = await FilePicker.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final bytes = result.files.single.bytes!;
+        final extension = result.files.single.extension ?? 'png';
+        final base64 = 'data:image/$extension;base64,${base64Encode(bytes)}';
+        setState(() {
+          if (slot == 1) {
+            _pickedImageBase64 = base64;
+          } else if (slot == 2) {
+            _pickedImage2Base64 = base64;
+          } else if (slot == 3) {
+            _pickedImage3Base64 = base64;
+          } else if (slot == 4) {
+            _pickedImage4Base64 = base64;
+          }
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+    }
+  }
 
   @override
   void initState() {
@@ -56,6 +94,11 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     _trackStock = true;
     _isPublished = widget.product.active;
     _tags = ['modern', 'oak']; // Placeholder
+
+    _pickedImageBase64 = widget.product.imageOne;
+    _pickedImage2Base64 = widget.product.imageTwo;
+    _pickedImage3Base64 = widget.product.imageThree;
+    _pickedImage4Base64 = widget.product.imageFour;
   }
 
   @override
@@ -71,143 +114,207 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     super.dispose();
   }
 
-  void _onUpdate() async {
+  void _onUpdate(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product updated successfully (Demo)')),
+      final name = _nameController.text.trim();
+      final subTitle = _subTitleController.text.trim();
+      final desc = _descController.text.trim();
+      final price = int.tryParse(_priceController.text.trim()) ?? 0;
+      final quantity = int.tryParse(_countController.text.trim()) ?? 0;
+
+      final updatedProduct = ProductEntity(
+        id: widget.product.id,
+        mongoId: widget.product.mongoId,
+        title: name,
+        subTitle: subTitle,
+        description: desc,
+        price: price,
+        category: _selectedCategory,
+        quantity: quantity,
+        active: _isPublished,
+        imageOne: _pickedImageBase64 ?? '',
+        imageTwo: _pickedImage2Base64 ?? '',
+        imageThree: _pickedImage3Base64 ?? '',
+        imageFour: _pickedImage4Base64 ?? '',
+        updatedAt: widget.product.updatedAt,
       );
-      context.pop();
+
+      context.read<UpdateProductBloc>().add(
+        UpdateProductEvent.updateProduct(product: updatedProduct),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FC),
-      body: Column(
-        children: [
-          // Top Action Bar
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
-            color: Colors.white,
-            child: Row(
+    return BlocProvider(
+      create: (context) => UpdateProductBloc(),
+      child: BlocConsumer<UpdateProductBloc, UpdateProductState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            success: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Product updated successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.pop(context, true);
+            },
+            failure: (message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to update product: $message'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+          );
+        },
+        builder: (context, state) {
+          final isLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFF8F9FC),
+            body: Column(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Products',
+                // Top Action Bar
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Products',
+                                style: GoogleFonts.inter(
+                                  color: Colors.grey[500],
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 12.sp,
+                                color: Colors.grey[400],
+                              ),
+                              Text(
+                                'Update Product',
+                                style: GoogleFonts.inter(
+                                  color: Colors.black87,
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 0.5.h),
+                          Text(
+                            'Edit Product Details',
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Cancel',
                           style: GoogleFonts.inter(
-                            color: Colors.grey[500],
-                            fontSize: 9.sp,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.sp,
                           ),
                         ),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 12.sp,
-                          color: Colors.grey[400],
-                        ),
-                        Text(
+                      ),
+                      SizedBox(width: 1.w),
+                      ElevatedButton.icon(
+                        onPressed: isLoading ? null : () => _onUpdate(context),
+                        icon: isLoading
+                            ? SizedBox(
+                                width: 14.sp,
+                                height: 14.sp,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Icon(LucideIcons.save, size: 14.sp),
+                        label: Text(
                           'Update Product',
                           style: GoogleFonts.inter(
-                            color: Colors.black87,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 0.5.h),
-                    Text(
-                      'Edit Product Details',
-                      style: GoogleFonts.inter(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF258fb0),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 2.w,
+                            vertical: 1.5.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'Cancel',
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10.sp,
-                    ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 1.w),
-                ElevatedButton.icon(
-                  onPressed: _onUpdate,
-                  icon: Icon(LucideIcons.save, size: 14.sp),
-                  label: Text(
-                    'Update Product',
-                    style: GoogleFonts.inter(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF258fb0),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.w,
-                      vertical: 1.5.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                Divider(height: 1, color: Colors.grey[200]),
+
+                // Scrollable Form Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(2.w),
+                    child: Form(
+                      key: _formKey,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Column (Main Form)
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              children: [
+                                _buildBasicInfoCard(),
+                                SizedBox(height: 2.h),
+                                _buildPricingInventoryCard(),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 2.w),
+                          // Right Column (Media & Settings)
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                _buildProductMediaCard(),
+                                SizedBox(height: 2.h),
+                                _buildTagsSEOCard(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          Divider(height: 1, color: Colors.grey[200]),
-
-          // Scrollable Form Content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(2.w),
-              child: Form(
-                key: _formKey,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left Column (Main Form)
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          _buildBasicInfoCard(),
-                          SizedBox(height: 2.h),
-                          _buildPricingInventoryCard(),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 2.w),
-                    // Right Column (Media & Settings)
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          _buildProductMediaCard(),
-                          SizedBox(height: 2.h),
-                          _buildTagsSEOCard(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -455,6 +562,33 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
   }
 
   Widget _buildProductMediaCard() {
+    Widget? mainImageWidget;
+    if (_pickedImageBase64 != null && _pickedImageBase64!.isNotEmpty) {
+      if (_pickedImageBase64!.startsWith('data:image/') ||
+          _pickedImageBase64!.contains(';base64,')) {
+        try {
+          final bytes = base64Decode(_pickedImageBase64!.split(',').last);
+          mainImageWidget = Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          );
+        } catch (e) {
+          // Handle error
+        }
+      } else {
+        mainImageWidget = Image.network(
+          _pickedImageBase64!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) =>
+              const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
+        );
+      }
+    }
+
     return _SectionCard(
       title: 'Product Media',
       icon: LucideIcons.image,
@@ -477,62 +611,85 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
         children: [
           AspectRatio(
             aspectRatio: 1.2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8E6DE),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF258fb0), width: 2),
-              ),
-              child: Stack(
-                children: [
-                  Center(
-                    // Placeholder for main image
-                    child: Container(
-                      width: 40,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
+            child: InkWell(
+              onTap: () => _onPickImage(1),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8E6DE),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF258fb0), width: 2),
+                ),
+                child: mainImageWidget != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: mainImageWidget,
+                      )
+                    : Stack(
+                        children: [
+                          Center(
+                            // Placeholder for main image
+                            child: Container(
+                              width: 40,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF258fb0),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'MAIN',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 8.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF258fb0),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        'MAIN',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 8.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
           SizedBox(height: 1.h),
           Row(
             children: [
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(2),
+                  imageBase64: _pickedImage2Base64,
+                ),
+              ),
               SizedBox(width: 1.w),
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(3),
+                  imageBase64: _pickedImage3Base64,
+                ),
+              ),
               SizedBox(width: 1.w),
-              Expanded(child: _MediaPlaceholder()),
+              Expanded(
+                child: _MediaPlaceholder(
+                  onTap: () => _onPickImage(4),
+                  imageBase64: _pickedImage4Base64,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 1.h),
@@ -776,37 +933,81 @@ class _SectionCard extends StatelessWidget {
 }
 
 class _MediaPlaceholder extends StatelessWidget {
+  final VoidCallback onTap;
+  final String? imageBase64;
+
+  const _MediaPlaceholder({required this.onTap, this.imageBase64});
+
   @override
   Widget build(BuildContext context) {
+    Widget? imageWidget;
+    if (imageBase64 != null && imageBase64!.isNotEmpty) {
+      if (imageBase64!.startsWith('data:image/') ||
+          imageBase64!.contains(';base64,')) {
+        try {
+          final bytes = base64Decode(imageBase64!.split(',').last);
+          imageWidget = Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          );
+        } catch (e) {
+          // Handle error
+        }
+      } else {
+        imageWidget = Image.network(
+          imageBase64!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) =>
+              const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
+        );
+      }
+    }
+
     return AspectRatio(
       aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey[200]!,
-            width: 2,
-            style: BorderStyle.solid,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey[200]!,
+              width: 2,
+              style: BorderStyle.solid,
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: DottedBorder(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(LucideIcons.camera, color: Colors.grey[400], size: 16.sp),
-                const SizedBox(height: 4),
-                Text(
-                  'ADD VIEW',
-                  style: GoogleFonts.inter(
-                    fontSize: 7.sp,
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.bold,
+          child: imageWidget != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: imageWidget,
+                )
+              : DottedBorder(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.camera,
+                          color: Colors.grey[400],
+                          size: 16.sp,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'ADD VIEW',
+                          style: GoogleFonts.inter(
+                            fontSize: 7.sp,
+                            color: Colors.grey[400],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
         ),
       ),
     );

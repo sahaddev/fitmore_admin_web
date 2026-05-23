@@ -25,12 +25,12 @@ $CouponUpdateEventCopyWith<CouponUpdateEvent> get copyWith => _$CouponUpdateEven
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CouponUpdateEvent&&const DeepCollectionEquality().equals(other.coupon, coupon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CouponUpdateEvent&&(identical(other.coupon, coupon) || other.coupon == coupon));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(coupon));
+int get hashCode => Object.hash(runtimeType,coupon);
 
 @override
 String toString() {
@@ -62,9 +62,9 @@ class _$CouponUpdateEventCopyWithImpl<$Res>
 
 /// Create a copy of CouponUpdateEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? coupon = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? coupon = null,}) {
   return _then(_self.copyWith(
-coupon: freezed == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
+coupon: null == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
 as CouponEntity,
   ));
 }
@@ -215,12 +215,12 @@ _$UpdateCouponCopyWith<_UpdateCoupon> get copyWith => __$UpdateCouponCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateCoupon&&const DeepCollectionEquality().equals(other.coupon, coupon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateCoupon&&(identical(other.coupon, coupon) || other.coupon == coupon));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(coupon));
+int get hashCode => Object.hash(runtimeType,coupon);
 
 @override
 String toString() {
@@ -252,9 +252,9 @@ class __$UpdateCouponCopyWithImpl<$Res>
 
 /// Create a copy of CouponUpdateEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? coupon = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? coupon = null,}) {
   return _then(_UpdateCoupon(
-coupon: freezed == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
+coupon: null == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
 as CouponEntity,
   ));
 }

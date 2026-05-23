@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
-import 'package:go_router/go_router.dart';
 import '../../domain/entities/product.dart';
 import '../../../dashboard/presentation/widgets/dashboard_header.dart';
 import '../../../../core/routes/app_routers.dart';
 import '../../../../core/routes/navigation_service.dart';
+import '../blocs/productList/product_list_bloc.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final ProductEntity product;
@@ -71,34 +72,39 @@ class ProductDetailsPage extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => NavigationService.pop(),
           icon: const Icon(LucideIcons.arrowLeft),
           color: Colors.grey[600],
         ),
         SizedBox(width: 0.5.w),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              product.title,
-              style: GoogleFonts.inter(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.inter(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            Text(
-              'SKU: LD-2024-OAK-SM | ID: ${product.id ?? product.mongoId}',
-              style: GoogleFonts.inter(
-                fontSize: 10.sp,
-                color: Colors.grey[500],
+              Text(
+                'SKU: LD-2024-OAK-SM | ID: ${product.id ?? product.mongoId}',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.inter(
+                  fontSize: 10.sp,
+                  color: Colors.grey[500],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const Spacer(),
         OutlinedButton.icon(
-          onPressed: () {},
+          onPressed: () => _showDeleteDialog(context),
           icon: Icon(LucideIcons.trash2, size: 14.sp),
           label: const Text('Delete'),
           style: OutlinedButton.styleFrom(
@@ -124,6 +130,127 @@ class ProductDetailsPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    final parsedId = product.id ?? 0;
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        LucideIcons.alertTriangle,
+                        color: Colors.red[600],
+                        size: 20.sp,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        'Delete Product',
+                        style: GoogleFonts.inter(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Are you sure you want to delete "${product.title}"? This action cannot be undone and will permanently remove this product from the database.',
+                  style: GoogleFonts.inter(
+                    fontSize: 10.sp,
+                    color: Colors.grey[600],
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey[300]!),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.inter(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        context.read<ProductListBloc>().add(
+                          ProductListEvent.deleteProduct(parsedId),
+                        );
+                        NavigationService.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[600],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Delete',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -15,6 +15,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   ProductListBloc() : super(const ProductListStateInitial()) {
     on<_FetchProducts>(_onFetchProducts);
+    on<_DeleteProduct>(_onDeleteProduct);
   }
 
   FutureOr<void> _onFetchProducts(
@@ -23,6 +24,20 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   ) async {
     emit(const ProductListState.loading());
     try {
+      final products = await _productUsecase.getAllProducts();
+      emit(ProductListState.loaded(products));
+    } catch (e) {
+      emit(ProductListState.failure(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onDeleteProduct(
+    _DeleteProduct event,
+    Emitter<ProductListState> emit,
+  ) async {
+    emit(const ProductListState.loading());
+    try {
+      await _productUsecase.deleteProduct(event.id);
       final products = await _productUsecase.getAllProducts();
       emit(ProductListState.loaded(products));
     } catch (e) {

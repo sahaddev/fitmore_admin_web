@@ -222,12 +222,12 @@ _$AddCouponCopyWith<_AddCoupon> get copyWith => __$AddCouponCopyWithImpl<_AddCou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddCoupon&&const DeepCollectionEquality().equals(other.coupon, coupon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddCoupon&&(identical(other.coupon, coupon) || other.coupon == coupon));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(coupon));
+int get hashCode => Object.hash(runtimeType,coupon);
 
 @override
 String toString() {
@@ -259,9 +259,9 @@ class __$AddCouponCopyWithImpl<$Res>
 
 /// Create a copy of CouponAddAndLIstEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? coupon = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? coupon = null,}) {
   return _then(_AddCoupon(
-coupon: freezed == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
+coupon: null == coupon ? _self.coupon : coupon // ignore: cast_nullable_to_non_nullable
 as CouponEntity,
   ));
 }

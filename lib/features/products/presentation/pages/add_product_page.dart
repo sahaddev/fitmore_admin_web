@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:sizer/sizer.dart';
@@ -193,7 +192,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                       const Spacer(),
                       TextButton(
-                        onPressed: isLoading ? null : () => context.pop(),
+                        onPressed: isLoading ? null : () => Navigator.of(context).pop(),
                         child: Text(
                           'Discard Draft',
                           style: GoogleFonts.inter(
